@@ -118,6 +118,25 @@ Cada sesión tiene: **calentamiento dinámico → potencia → fuerza → core �
 
 ---
 
+## 10. Pies y pisada
+
+- En un ensayo con **118 corredores**, 8 semanas de fortalecimiento de pies y tobillos (y luego 3 veces por semana) redujeron las lesiones: **14 % frente a 33 %** en el grupo control. El grupo sin entrenamiento tuvo 2,4 veces más riesgo (Taddei y cols., 2020).
+- El ejercicio de **pie corto** activa el arco. En una revisión, varios estudios mostraron mejor arco y mejor equilibrio dinámico; hacen falta al menos 5 semanas (Hara y cols., 2023).
+- **En tu plan:** 2 ejercicios de pies en cada sesión, descalzo, unos 4 minutos: pie corto, yoga de dedos, recoger toalla, separar dedos, caminar de puntillas y talones, y elevación de talones con pelota.
+
+---
+
+## 11. Alimentación
+
+- **Calorías:** ecuación de Mifflin-St Jeor, la más precisa para adultos sanos en una revisión sistemática (Frankenfield y cols., 2005), multiplicada por tu nivel de actividad.
+- **Objetivo:** bajar grasa = −15 %, ganar músculo = +10 %, rendir = mantenimiento.
+- **Proteína:** 1,4–2,0 g por kg al día, repartida cada 3–4 horas, con 20–40 g por comida (ISSN, Jäger y cols., 2017).
+- **Grasas** ~25 % de las calorías y el resto **carbohidratos**, que son la gasolina para saltar y jugar.
+- **Agua:** ~35 ml por kg al día, más 0,5–0,75 L por hora de entreno o partido.
+- Revisa tu peso cada 2 semanas y ajusta ±150 kcal si no avanzas.
+
+---
+
 ## Fuentes
 
 1. Bull FC y cols. *WHO 2020 guidelines on physical activity and sedentary behaviour.* British Journal of Sports Medicine, 2020;54(24):1451-1462. [Número especial BJSM](https://bjsm.bmj.com/content/54/24)
@@ -134,3 +153,8 @@ Cada sesión tiene: **calentamiento dinámico → potencia → fuerza → core �
 12. van Dyk N, Behan FP, Whiteley R. *Including the Nordic hamstring exercise in injury prevention programmes halves the rate of hamstring injuries: a systematic review and meta-analysis of 8459 athletes.* British Journal of Sports Medicine, 2019;53(21):1362-1370. [Resumen](https://bjsm.bmj.com/content/53/21/1362.abstract)
 13. Theodorou A, Komnos G, Hantes M. *Patellar tendinopathy: an overview of prevalence, risk factors, screening, diagnosis, treatment and prevention.* Archives of Orthopaedic and Trauma Surgery, 2023;143:6695-6705. [Artículo](https://link.springer.com/article/10.1007/s00402-023-04998-5)
 14. Andersson SH y cols. *Preventing overuse shoulder injuries among throwing athletes: a cluster-randomised controlled trial in 660 elite handball players.* British Journal of Sports Medicine, 2017;51(14):1073-1080.
+
+15. Taddei UT, Matias AB, Duarte M, Sacco ICN. *Foot core training to prevent running-related injuries: a survival analysis of a single-blind, randomized controlled trial.* American Journal of Sports Medicine, 2020;48(14):3610-3619. [Resumen](https://www.physio-network.com/research-reviews/ankle-foot/foot-core-training-to-prevent-running-related-injuries-a-survival-analysis-of-a-single-blind-randomized-controlled-trial/)
+16. Hara S, Kitano M, Kudo S. *The effects of short foot exercises to treat flat foot deformity: a systematic review.* Journal of Back and Musculoskeletal Rehabilitation, 2023;36(1). [Artículo](https://journals.sagepub.com/doi/10.3233/BMR-210374)
+17. Jäger R y cols. *International Society of Sports Nutrition Position Stand: protein and exercise.* JISSN, 2017;14:20. [PubMed](https://pubmed.ncbi.nlm.nih.gov/28642676/)
+18. Frankenfield D, Roth-Yousey L, Compher C. *Comparison of predictive equations for resting metabolic rate in healthy nonobese and obese adults: a systematic review.* J Am Diet Assoc, 2005;105(5):775-789. [Resumen](https://pure.psu.edu/en/publications/comparison-of-predictive-equations-for-resting-metabolic-rate-in-/)

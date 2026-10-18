@@ -5,8 +5,9 @@ App para el celular (PWA) con todo tu proyecto de vida en un solo lugar:
 - **Hoy**: resumen del día con tu skincare, tu entreno, tus metas y tu dinero del mes.
 - **Metas y proyectos**: metas por área (personal, salud, finanzas, estudios, relaciones, proyectos), divididas en pasos con barra de avance y fecha límite.
 - **Finanzas**: ingresos y gastos por categoría, tasa de ahorro, metas de ahorro, calculadoras de interés compuesto y de préstamos, y ayuda para decidir (“¿Me lo compro?” y una tabla para comparar opciones).
-- **Entreno en casa**: plan de 12 semanas sin equipo pensado para vóley, basado en guías de la OMS y el ACSM y en revisiones científicas: A (potencia y piernas), B (tren superior y hombros), C (core, agilidad y resistencia) y una sesión opcional de yoga. Incluye una guía científica con fuentes ([docs/guia-entrenamiento.md](docs/guia-entrenamiento.md)).
-- **Skincare**: rutina de mañana, noche y semanal con check diario, racha y calendario de 4 semanas.
+- **Entreno en casa**: plan de 12 semanas sin equipo pensado para vóley, basado en guías de la OMS y el ACSM y en revisiones científicas: A (potencia y piernas), B (tren superior y hombros), C (core, agilidad y resistencia) y una sesión opcional de yoga. Cada ejercicio tiene temporizador (series, descansos e intervalos con sonido) y un ejemplo en video, más ejercicios de pies para la pisada. Incluye una guía científica con fuentes ([docs/guia-entrenamiento.md](docs/guia-entrenamiento.md)).
+- **Alimentación**: calorías, proteína y porciones por comida según tu peso, estatura, edad y objetivo.
+- **Skincare**: tu rutina (CeraVe, Byphasse, Purito y Neutrogena) con ilustraciones de cada producto, check diario, racha y calendario de 4 semanas.
 - **Recordatorios**: descarga un archivo de calendario (.ics) para que tu celular te avise del skincare y del entreno.
 
 Los datos se guardan solo en tu celular (sin cuentas ni servidores). Desde **Ajustes** puedes descargar una copia de seguridad y restaurarla.

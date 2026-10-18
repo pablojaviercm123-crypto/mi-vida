@@ -19,6 +19,8 @@ function defaultState() {
       log: {},
       weeklyLog: [],
     },
+    skinV: 0, // 0 = aún sin la rutina base actual
+    nutrition: { profile: null },
     ui: { finTab: 'resumen', finMonth: null, workoutPick: null, workoutTab: 'plan' },
   };
 }
@@ -48,6 +50,13 @@ function mergeDefaults(def, data) {
 
 let S = loadState();
 S.ui.workoutPick = null; // cada vez que abres la app, muestra la sesión que te toca
+// Rutina base de skincare actualizada (los productos reales de Pablo).
+if ((S.skinV || 1) < SKINCARE_VERSION) {
+  S.skin.am = DEFAULT_SKINCARE.am.map(s => ({ ...s }));
+  S.skin.pm = DEFAULT_SKINCARE.pm.map(s => ({ ...s }));
+  S.skinV = SKINCARE_VERSION;
+  save();
+}
 
 function save() {
   try {
@@ -94,11 +103,37 @@ const ICONS = {
   bag: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>',
   trend: '<path d="M3.5 17 9 11.5l3.5 3.5L20 7.5"/><path d="M15 7.5h5v5"/>',
   bank: '<path d="M3.5 9.5 12 4l8.5 5.5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3.5 20.5h17"/>',
+  timer: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 2M9.5 3h5M12 3v3"/>',
+  play: '<rect x="3" y="5.5" width="18" height="13" rx="4"/><path d="m10.5 9.5 4 2.5-4 2.5z" fill="currentColor"/>',
+  pause: '<path d="M9 6v12M15 6v12"/>',
+  skip: '<path d="m6 6 8 6-8 6zM17 6v12"/>',
+  food: '<path d="M4 12h16a8 8 0 0 1-16 0z"/><path d="M8 8c0-2 2-2 2-4M12 8c0-2 2-2 2-4M16 8c0-2 2-2 2-4"/>',
+  scaleBody: '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 9.5a5 5 0 0 1 7 0L12 12z"/>',
   piggy: '<path d="M5 11.5c0-3 3-5.5 7-5.5 3 0 5.5 1.3 6.5 3.5h1.5v4h-1.5a6 6 0 0 1-2.5 3V19h-3v-1.5h-3V19H7v-2.5c-1.3-1.2-2-3-2-5z"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/>',
 };
 
 function icon(name, cls = '') {
   return `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`;
+}
+
+/* ---------- Ilustraciones de productos (40 × 40) ---------- */
+
+const PRODUCT_ART = {
+  cerave: `<rect x="17" y="3" width="6" height="4" rx="1" fill="#3A3A38"/><rect x="21" y="4" width="8" height="2.4" rx="1.2" fill="#3A3A38"/>
+    <rect x="18.5" y="7" width="3" height="4" fill="#3A3A38"/><rect x="12" y="10" width="16" height="27" rx="4" fill="#FFFFFF" stroke="#D9D6CE"/>
+    <rect x="12" y="20" width="16" height="9" fill="#2FA59C"/><rect x="15" y="14" width="10" height="2" rx="1" fill="#1D5E8C"/>
+    <rect x="15" y="23" width="10" height="1.6" rx=".8" fill="#FFFFFF" opacity=".85"/>`,
+  byphasse: `<rect x="15.5" y="3" width="9" height="7" rx="2" fill="#FFFFFF" stroke="#D9D6CE"/><path d="M14 12a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v23a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3z" fill="#BFE6B3"/>
+    <rect x="14" y="19" width="12" height="11" fill="#FFFFFF" opacity=".9"/><path d="M20 21.5c2.6 1 3 4 0 6.5-3-2.5-2.6-5.5 0-6.5z" fill="#4FA34A"/>`,
+  purito: `<path d="M11 4h18l-2.5 25h-13z" fill="#EFE9DC" stroke="#D9D6CE"/><rect x="13.2" y="10" width="13.6" height="9" fill="#A9BE8F"/>
+    <rect x="16" y="13" width="8" height="1.6" rx=".8" fill="#FFFFFF"/><rect x="15.5" y="29" width="9" height="8" rx="2" fill="#6E7B5B"/>`,
+  neutrogena: `<rect x="14" y="3" width="12" height="7" rx="2.5" fill="#F26A21"/><path d="M13 12a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v22a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4z" fill="#FFFFFF" stroke="#D9D6CE"/>
+    <rect x="13" y="17" width="14" height="4" fill="#F26A21"/><rect x="16" y="25" width="8" height="1.6" rx=".8" fill="#2B4C8C"/><rect x="16" y="28.5" width="5" height="1.6" rx=".8" fill="#9A988F"/>`,
+};
+
+function productArt(id, cls = '') {
+  if (!PRODUCT_ART[id]) return '';
+  return `<span class="product-art ${cls}"><svg viewBox="0 0 40 40" aria-hidden="true">${PRODUCT_ART[id]}</svg></span>`;
 }
 
 /* ---------- Utilidades ---------- */
@@ -306,7 +341,7 @@ function weeklyCount(id) {
   return S.skin.weeklyLog.filter(l => l.id === id && l.date >= start).length;
 }
 
-function skinChecklist(slot) {
+function skinChecklist(slot, detailed = false) {
   const key = today();
   const log = S.skin.log[key];
   const items = S.skin[slot];
@@ -314,11 +349,12 @@ function skinChecklist(slot) {
   return `<ul class="checklist">${items.map((s, i) => {
     const on = log && log[slot].includes(s.id);
     return `<li><button class="check ${on ? 'on' : ''}" data-action="skin-toggle" data-slot="${slot}" data-id="${s.id}" aria-pressed="${on}">
-      <span class="box">${icon('check')}</span><span class="step-n">${String(i + 1).padStart(2, '0')}</span><span class="label">${esc(s.text)}</span></button></li>`;
+      <span class="box">${icon('check')}</span>${s.product ? productArt(s.product) : `<span class="step-n">${String(i + 1).padStart(2, '0')}</span>`}
+      <span class="label">${esc(s.text)}${detailed && s.note ? `<small>${esc(s.note)}</small>` : ''}</span></button></li>`;
   }).join('')}</ul>`;
 }
 
-function skinCard(slot) {
+function skinCard(slot, detailed = false) {
   const key = today();
   const done = skinDone(key, slot), total = S.skin[slot].length;
   const full = total && done === total;
@@ -328,7 +364,7 @@ function skinCard(slot) {
       <div class="grow"><p class="eyebrow">Skincare</p><h3>${slot === 'am' ? 'Mañana' : 'Noche'}</h3></div>
       <span class="pill ${full ? 'lime' : ''}">${done}/${total}</span>
     </div>
-    ${skinChecklist(slot)}
+    ${skinChecklist(slot, detailed)}
   </section>`;
 }
 
@@ -837,14 +873,110 @@ function decisionCard(d) {
 /* ----- Ejercicio ----- */
 
 function viewEjercicio() {
-  const tab = S.ui.workoutTab === 'guia' ? 'guia' : 'plan';
+  const tab = ['plan', 'comida', 'guia'].includes(S.ui.workoutTab) ? S.ui.workoutTab : 'plan';
+  const titles = { plan: 'Tu plan', comida: 'Alimentación', guia: 'La ciencia detrás' };
   return `
-    ${pageHead('Entreno en casa · vóley', tab === 'guia' ? 'La ciencia detrás' : 'Tu plan')}
+    ${pageHead('Cuerpo · vóley', titles[tab])}
     <div class="segmented">
-      <button class="${tab === 'plan' ? 'active' : ''}" data-action="workout-tab" data-tab="plan">Plan</button>
-      <button class="${tab === 'guia' ? 'active' : ''}" data-action="workout-tab" data-tab="guia">Guía científica</button>
+      ${[['plan', 'Entreno'], ['comida', 'Alimentación'], ['guia', 'Guía']].map(([id, l]) =>
+        `<button class="${tab === id ? 'active' : ''}" data-action="workout-tab" data-tab="${id}">${l}</button>`).join('')}
     </div>
-    ${tab === 'guia' ? workoutGuide() : workoutPlan()}`;
+    ${tab === 'guia' ? workoutGuide() : tab === 'comida' ? nutritionView() : workoutPlan()}`;
+}
+
+/* ----- Alimentación ----- */
+
+function nutritionPlan(p) {
+  const bmr = 10 * p.weight + 6.25 * p.height - 5 * p.age + (p.sex === 'f' ? -161 : 5); // Mifflin-St Jeor
+  const act = ACTIVITY_LEVELS.find(a => a.id === p.activity) || ACTIVITY_LEVELS[1];
+  const goal = NUTRITION_GOALS.find(g => g.id === p.goal) || NUTRITION_GOALS[2];
+  const tdee = bmr * act.factor;
+  const kcal = Math.round(tdee * (1 + goal.kcal) / 10) * 10;
+  const protein = Math.round(p.weight * goal.protein);
+  const fat = Math.round(kcal * 0.25 / 9);
+  const carbs = Math.max(0, Math.round((kcal - protein * 4 - fat * 9) / 4));
+  const bmi = p.weight / Math.pow(p.height / 100, 2);
+  const water = Math.round(p.weight * 35 / 100) / 10; // litros, sin contar el entreno
+  return { bmr: Math.round(bmr), tdee: Math.round(tdee), kcal, protein, fat, carbs, bmi, water, goal, act };
+}
+
+function nutritionForm(p = {}) {
+  const sel = (v, x) => (v === x ? 'selected' : '');
+  return `
+    <div class="grid2">
+      <label>Peso (kg)<input type="number" inputmode="decimal" name="weight" min="30" max="250" step="0.1" required value="${esc(p.weight)}"></label>
+      <label>Estatura (cm)<input type="number" inputmode="numeric" name="height" min="120" max="230" required value="${esc(p.height)}"></label>
+      <label>Edad<input type="number" inputmode="numeric" name="age" min="14" max="90" required value="${esc(p.age)}"></label>
+      <label>Sexo<select name="sex"><option value="m" ${sel(p.sex, 'm')}>Hombre</option><option value="f" ${sel(p.sex, 'f')}>Mujer</option></select></label>
+    </div>
+    <label>Objetivo<select name="goal">${NUTRITION_GOALS.map(g => `<option value="${g.id}" ${sel(p.goal, g.id)}>${g.name}</option>`).join('')}</select></label>
+    <label>Actividad<select name="activity">${ACTIVITY_LEVELS.map(a => `<option value="${a.id}" ${sel(p.activity || 'media', a.id)}>${a.name}</option>`).join('')}</select></label>
+    <label>Comidas al día<select name="meals">${[3, 4, 5].map(n => `<option ${String(p.meals || 4) === String(n) ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+    <label>Alergias o lo que no comes (opcional)<input name="avoid" maxlength="80" value="${esc(p.avoid)}" placeholder="Ej: lácteos, mariscos"></label>`;
+}
+
+function nutritionView() {
+  const p = S.nutrition.profile;
+  if (!p) {
+    return `<section class="empty">
+      <div class="empty-ic">${icon('food')}</div>
+      <h3>Tu plan de alimentación</h3>
+      <p class="muted">Con tu peso, estatura, edad y objetivo calculo tus calorías, proteína y porciones por comida.</p>
+      <button class="btn primary" data-action="nutri-edit">${icon('edit')}Completar mis datos</button>
+    </section>`;
+  }
+  const n = nutritionPlan(p);
+  const split = MEAL_SPLITS[p.meals] || MEAL_SPLITS[4];
+  const kP = n.protein * 4, kC = n.carbs * 4, kF = n.fat * 9;
+  // Porciones con la mano: palma ≈ 25 g proteína, puñado ≈ 25 g carbohidrato, pulgar ≈ 8 g grasa.
+  const hand = (g, per) => Math.max(0.5, Math.round(g / per * 2) / 2);
+  const fmt = v => String(v).replace('.', ',');
+  return `
+    <section class="card dark">
+      <p class="eyebrow">${esc(n.goal.name)} · ${p.weight} kg · ${p.height} cm</p>
+      <p class="display-num">${n.kcal.toLocaleString('es-BO')}<small>kcal al día</small></p>
+      <div class="macro-bar"><i class="p" style="flex:${kP}"></i><i class="c" style="flex:${kC}"></i><i class="f" style="flex:${kF}"></i></div>
+      <div class="figures on-dark">
+        <div><span><i class="dot mp"></i>Proteína</span><b>${n.protein} g</b></div>
+        <div><span><i class="dot mc"></i>Carbohidratos</span><b>${n.carbs} g</b></div>
+        <div><span><i class="dot mf"></i>Grasas</span><b>${n.fat} g</b></div>
+      </div>
+      <p class="micro">${esc(n.goal.note)}</p>
+    </section>
+
+    <div class="figures card">
+      <div><span>Agua</span><b>${fmt(n.water)} L</b></div>
+      <div><span>Mantenimiento</span><b>${n.tdee.toLocaleString('es-BO')}</b></div>
+      <div><span>IMC</span><b>${fmt(n.bmi.toFixed(1))}</b></div>
+    </div>
+    <p class="note">Suma 0,5–0,75 L de agua por cada hora de entreno o vóley. El IMC es solo una referencia: no distingue músculo de grasa.</p>
+
+    <p class="section-label">Tu día, comida por comida</p>
+    <p class="micro hand-legend">Porciones con tu mano: <b>palma</b> = proteína · <b>puñado</b> = carbohidrato · <b>pulgar</b> = grasa · más 1–2 puños de verduras.</p>
+    ${split.map(([meal, share]) => {
+      const ideas = MEAL_IDEAS[meal] || [];
+      return `<section class="card meal">
+        <div class="card-head"><h3 class="grow">${meal}</h3><span class="pill">${Math.round(n.kcal * share)} kcal</span></div>
+        <div class="portions">
+          <span><b>${fmt(hand(n.protein * share, 25))}</b> palma</span>
+          <span><b>${fmt(hand(n.carbs * share, 25))}</b> puñado</span>
+          <span><b>${fmt(hand(n.fat * share, 8))}</b> pulgar</span>
+        </div>
+        <ul class="dash">${ideas.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+      </section>`;
+    }).join('')}
+    ${p.avoid ? `<p class="note">Evita: <b>${esc(p.avoid)}</b>. Cambia esos alimentos por otros del mismo grupo.</p>` : ''}
+
+    <p class="section-label">Alrededor del vóley y el entreno</p>
+    <section class="card"><ul class="dash">
+      <li>1–3 h antes: comida con carbohidrato y algo de proteína (arroz con pollo, pan con huevo, avena con plátano).</li>
+      <li>Después: 20–40 g de proteína en las 2 horas siguientes (un vaso de leche + 2 huevos, o una palma de pollo).</li>
+      <li>Si juegas más de 1 hora con calor, bebe agua durante el partido y come algo con sal después.</li>
+    </ul></section>
+
+    <button class="btn block" data-action="nutri-edit">${icon('edit')}Actualizar mis datos</button>
+    <p class="micro">Guía general calculada con la ecuación de Mifflin-St Jeor y las recomendaciones de proteína de la ISSN. Revisa tu peso cada 2 semanas y ajusta ±150 kcal si no avanzas. Si tienes alguna condición de salud, consulta a un nutricionista.</p>
+  `;
 }
 
 function workoutPlan() {
@@ -922,6 +1054,10 @@ function workoutPlan() {
               <span class="box">${icon('check')}</span>
               <span class="label"><b>${esc(ex.name)}</b><span class="reps">${esc(ex.reps[level - 1])}</span></span>
             </button>
+            <div class="ex-tools">
+              <button class="tool" data-action="timer-open" data-day="${day}" data-i="${i}">${icon('timer')}Temporizador</button>
+              <a class="tool" href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.q || ex.name)}" target="_blank" rel="noopener">${icon('play')}Ver ejemplo</a>
+            </div>
             <details class="tipbox"><summary>Cómo hacerlo</summary><p>${esc(ex.tip)}</p></details>
           </li>`;
         }).join('')}</ul>`).join('')}
@@ -985,13 +1121,17 @@ function viewPiel() {
     ${pageHead('Skincare', 'Tu rutina', `<button class="icon-btn boxed" data-action="skin-edit" aria-label="Editar rutina">${icon('edit')}</button>`)}
 
     <section class="card dark stat-strip">
-      <div><span>Racha</span><b>${streak}<small> días</small></b></div>
+      <div><span>Racha</span><b>${streak}<small> ${streak === 1 ? 'día' : 'días'}</small></b></div>
       <div><span>Completos</span><b>${full}<small>/28</small></b></div>
       <div><span>Hoy</span><b>${Math.round(skinRatio(key) * 100)}<small>%</small></b></div>
     </section>
 
-    ${skinCard('am')}
-    ${skinCard('pm')}
+    ${skinCard('am', true)}
+    ${skinCard('pm', true)}
+
+    <p class="section-label">Mis productos</p>
+    <div class="products">${Object.entries(PRODUCTS).map(([id, p]) => `
+      <div class="product">${productArt(id, 'lg')}<div><p class="eyebrow">${esc(p.brand)}</p><b>${esc(p.name)}</b><span class="muted small">${esc(p.detail)}</span></div></div>`).join('')}</div>
 
     <p class="section-label">Esta semana</p>
     <section class="card">
@@ -1052,6 +1192,166 @@ function viewAjustes() {
   `;
 }
 
+// Marca o desmarca un ejercicio de la sesión de hoy (force = true solo marca).
+function markExercise(day, i, force) {
+  let cur = S.workout.current;
+  if (!cur || cur.date !== today() || !cur.done || Array.isArray(cur.done)) cur = S.workout.current = { date: today(), done: {} };
+  const list = cur.done[day] = cur.done[day] || [];
+  const j = list.indexOf(i);
+  if (j >= 0 && !force) list.splice(j, 1);
+  else if (j < 0) list.push(i);
+  save(); render();
+}
+
+/* ---------- Temporizador de ejercicios ---------- */
+
+// Lee las series, segundos y lados del texto de repeticiones del nivel actual.
+function timerPhases(ex, level) {
+  const raw = ex.reps[level - 1];
+  const text = raw.replace(/\([^)]*\)/g, '');
+  const rest = REST_BY_BLOCK[ex.block] ?? 60;
+  const phases = [{ type: 'prep', secs: 5, title: 'Prepárate', sub: raw }];
+
+  const hiit = raw.match(/(\d+)\s*rondas?:\s*(\d+)\s*s[^/]*\/\s*(\d+)\s*s/);
+  if (hiit) {
+    const [, rounds, work, off] = hiit.map(Number);
+    for (let r = 1; r <= rounds; r++) {
+      phases.push({ type: 'work', secs: work, title: '¡Dale!', sub: `Ronda ${r} de ${rounds}` });
+      if (r < rounds) phases.push({ type: 'rest', secs: off, title: 'Descansa', sub: `Sigue la ronda ${r + 1}` });
+    }
+    return phases;
+  }
+
+  const setsM = text.match(/^\s*(\d+)\s*(?:×|rondas?)/);
+  const sets = setsM ? Number(setsM[1]) : 1;
+  const secM = text.match(/^\s*(?:\d+\s*×\s*)?(\d+)\s*(s|min)\b/);
+  const each = /c\/u/.test(text);
+  const sides = secM && (each || /por (lado|pierna|brazo)/.test(text)) ? 2 : 1;
+
+  for (let s = 1; s <= sets; s++) {
+    const setLabel = sets > 1 ? `Serie ${s} de ${sets}` : '';
+    if (secM) {
+      const secs = Number(secM[1]) * (secM[2] === 'min' ? 60 : 1);
+      for (let side = 1; side <= sides; side++) {
+        phases.push({ type: 'work', secs, title: sides > 1 ? `${each ? 'Parte' : 'Lado'} ${side}` : 'Mantén', sub: setLabel });
+        if (side < sides) phases.push({ type: 'rest', secs: 5, title: each ? 'Cambia' : 'Cambia de lado', sub: setLabel });
+      }
+    } else {
+      phases.push({ type: 'reps', secs: 0, title: raw.replace(/^\s*\d+\s*×\s*/, ''), sub: setLabel || 'Haz tus repeticiones' });
+    }
+    if (s < sets && rest) phases.push({ type: 'rest', secs: rest, title: 'Descansa', sub: `Sigue la serie ${s + 1}` });
+  }
+  return phases;
+}
+
+let T = null;
+let audioCtx = null;
+let wakeLock = null;
+
+function beep(freq = 880, ms = 140) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.frequency.value = freq; o.connect(g); g.connect(audioCtx.destination);
+    g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + ms / 1000);
+    o.start(); o.stop(audioCtx.currentTime + ms / 1000);
+  } catch (e) { /* sin sonido */ }
+}
+
+function openTimer(day, i) {
+  const ex = WORKOUT_PLAN[day].exercises[i];
+  T = { day, i, ex, phases: timerPhases(ex, S.workout.level), idx: -1, running: false, remaining: 0, endAt: 0, tick: null };
+  beep(0, 1); // desbloquea el audio con el toque del usuario
+  $('#timer').showModal();
+  if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(l => { wakeLock = l; }).catch(() => {});
+  timerNext();
+}
+
+function closeTimer() {
+  if (T) clearInterval(T.tick);
+  T = null;
+  if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+  $('#timer').close();
+}
+
+// Si se cierra con el botón atrás o Esc, limpia el temporizador.
+$('#timer').addEventListener('close', () => { if (T) closeTimer(); });
+
+function timerNext() {
+  if (!T) return;
+  clearInterval(T.tick);
+  T.idx++;
+  const ph = T.phases[T.idx];
+  if (!ph) { T.finished = true; T.running = false; beep(660, 160); setTimeout(() => beep(990, 260), 180); navigator.vibrate?.([120, 80, 220]); timerPaint(); return; }
+  if (T.idx > 0) { beep(ph.type === 'work' ? 990 : 660, 180); navigator.vibrate?.(120); }
+  T.remaining = ph.secs;
+  T.running = ph.type !== 'reps';
+  T.endAt = Date.now() + ph.secs * 1000;
+  if (T.running) T.tick = setInterval(timerTick, 200);
+  timerPaint();
+}
+
+function timerTick() {
+  if (!T || !T.running) return;
+  const left = Math.ceil((T.endAt - Date.now()) / 1000);
+  if (left !== T.remaining) {
+    T.remaining = left;
+    if (left > 0 && left <= 3) beep(520, 90);
+    if (left <= 0) return timerNext();
+    timerPaint();
+  }
+}
+
+function timerToggle() {
+  if (!T || T.finished) return;
+  const ph = T.phases[T.idx];
+  if (ph.type === 'reps') return timerNext();
+  if (T.running) { T.running = false; clearInterval(T.tick); }
+  else { T.running = true; T.endAt = Date.now() + T.remaining * 1000; T.tick = setInterval(timerTick, 200); }
+  timerPaint();
+}
+
+function timerPaint() {
+  if (!T) return;
+  const box = $('#timer-body');
+  const ph = T.phases[T.idx];
+  const total = T.phases.length - 1;
+  const step = Math.min(T.idx, total);
+  if (T.finished) {
+    box.className = 'timer-body done';
+    box.innerHTML = `
+      <p class="eyebrow">${esc(T.ex.block)}</p><h2>${esc(T.ex.name)}</h2>
+      <div class="timer-face"><div class="big">${icon('check')}</div><p>¡Ejercicio terminado!</p></div>
+      <button class="btn lime block" data-action="timer-done">Marcar como hecho</button>
+      <button class="btn on-dark block" data-action="timer-close">Cerrar</button>`;
+    return;
+  }
+  const frac = ph.secs ? Math.max(0, T.remaining) / ph.secs : 1;
+  const len = 2 * Math.PI * 108;
+  const mm = Math.floor(Math.max(0, T.remaining) / 60), ss = String(Math.max(0, T.remaining) % 60).padStart(2, '0');
+  box.className = `timer-body ${ph.type}`;
+  box.innerHTML = `
+    <p class="eyebrow">${esc(T.ex.block)} · paso ${step} de ${total}</p><h2>${esc(T.ex.name)}</h2>
+    <div class="timer-face">
+      <svg viewBox="0 0 240 240" aria-hidden="true"><circle cx="120" cy="120" r="108" class="t-track"/>
+        <circle cx="120" cy="120" r="108" class="t-ring" stroke-dasharray="${len}" stroke-dashoffset="${len * (1 - frac)}" transform="rotate(-90 120 120)"/></svg>
+      <div class="t-center">
+        <span class="t-phase">${esc(ph.title)}</span>
+        ${ph.type === 'reps' ? `<span class="t-reps">${icon('bolt')}</span>` : `<span class="t-time">${mm ? `${mm}:${ss}` : Math.max(0, T.remaining)}</span>`}
+        <span class="t-sub">${esc(ph.sub)}</span>
+      </div>
+    </div>
+    <div class="timer-controls">
+      ${ph.type === 'reps'
+        ? `<button class="btn lime block" data-action="timer-skip">Terminé la serie</button>`
+        : `<button class="t-btn" data-action="timer-add" aria-label="Sumar 15 segundos">+15</button>
+           <button class="t-btn main" data-action="timer-toggle" aria-label="${T.running ? 'Pausar' : 'Seguir'}">${icon(T.running ? 'pause' : 'play')}</button>
+           <button class="t-btn" data-action="timer-skip" aria-label="Saltar">${icon('skip')}</button>`}
+    </div>
+    <button class="btn ghost block t-close" data-action="timer-close">Salir</button>`;
+}
+
 /* ---------- Recordatorios (.ics para el calendario del celular) ---------- */
 
 function icsEvent({ summary, description, time, rrule }) {
@@ -1109,7 +1409,7 @@ const ACTIONS = {
     data => {
       const parse = (text, old) => text.split('\n').map(t => t.trim()).filter(Boolean).map(t => {
         const prev = old.find(o => o.text === t);
-        return { id: prev ? prev.id : uid(), text: t };
+        return prev ? { ...prev } : { id: uid(), text: t };
       });
       S.skin.am = parse(data.am, S.skin.am);
       S.skin.pm = parse(data.pm, S.skin.pm);
@@ -1153,17 +1453,25 @@ const ACTIONS = {
     }, 'Descargar');
   },
 
+  'nutri-edit': () => openModal('Mis datos', nutritionForm(S.nutrition.profile || {}), data => {
+    const num = k => Number(String(data[k]).replace(',', '.'));
+    const p = { weight: num('weight'), height: num('height'), age: num('age'), sex: data.sex, goal: data.goal, activity: data.activity, meals: Number(data.meals), avoid: data.avoid.trim() };
+    if (!(p.weight > 0 && p.height > 0 && p.age > 0)) { toast('Revisa peso, estatura y edad'); return false; }
+    S.nutrition.profile = p;
+    toast('Plan de alimentación listo');
+  }),
+  'timer-open': el => openTimer(el.dataset.day, Number(el.dataset.i)),
+  'timer-toggle': () => timerToggle(),
+  'timer-skip': () => timerNext(),
+  'timer-add': () => { if (T) { T.endAt += 15000; T.remaining += 15; timerPaint(); } },
+  'timer-close': () => closeTimer(),
+  'timer-done': () => {
+    if (T) markExercise(T.day, T.i, true);
+    closeTimer();
+  },
   'workout-tab': el => { S.ui.workoutTab = el.dataset.tab; save(); render(); },
   'pick-workout': el => { S.ui.workoutPick = el.dataset.day; render(); },
-  'ex-toggle': el => {
-    const day = el.dataset.day, i = Number(el.dataset.i);
-    let cur = S.workout.current;
-    if (!cur || cur.date !== today() || !cur.done || Array.isArray(cur.done)) cur = S.workout.current = { date: today(), done: {} };
-    const list = cur.done[day] = cur.done[day] || [];
-    const j = list.indexOf(i);
-    if (j >= 0) list.splice(j, 1); else list.push(i);
-    save(); render();
-  },
+  'ex-toggle': el => markExercise(el.dataset.day, Number(el.dataset.i)),
   'finish-workout': el => {
     const day = el.dataset.day;
     const total = WORKOUT_PLAN[day].exercises.length;
