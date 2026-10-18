@@ -1,6 +1,6 @@
 // Guarda la app en caché para que funcione sin internet.
 // Sube la versión cuando cambien los archivos para que el celular descargue lo nuevo.
-const CACHE = 'mi-vida-v5';
+const CACHE = 'mi-vida-v6';
 const FONT_CACHE = 'mi-vida-fonts';
 const FILES = [
   './', 'index.html', 'styles.css', 'data.js', 'app.js', 'manifest.webmanifest',
@@ -36,6 +36,8 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     fetch(e.request)
       .then(res => {
+        // Si el servidor falla (404, cuenta caída), usa la copia guardada y no la pises.
+        if (!res.ok) return caches.match(e.request, { ignoreSearch: true }).then(hit => hit || res);
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, copy));
         return res;
