@@ -11,7 +11,7 @@ function defaultState() {
     tx: [],
     savings: [],
     decisions: [],
-    workout: { level: 1, levelStart: 0, sessions: [], volley: [], current: null },
+    workout: { level: 1, levelStart: 0, sessions: [], volley: [], yoga: [], current: null },
     skin: {
       am: DEFAULT_SKINCARE.am.map(s => ({ ...s })),
       pm: DEFAULT_SKINCARE.pm.map(s => ({ ...s })),
@@ -19,7 +19,7 @@ function defaultState() {
       log: {},
       weeklyLog: [],
     },
-    ui: { finTab: 'resumen', finMonth: null, workoutPick: null },
+    ui: { finTab: 'resumen', finMonth: null, workoutPick: null, workoutTab: 'plan' },
   };
 }
 
@@ -47,6 +47,7 @@ function mergeDefaults(def, data) {
 }
 
 let S = loadState();
+S.ui.workoutPick = null; // cada vez que abres la app, muestra la sesión que te toca
 
 function save() {
   try {
@@ -54,6 +55,50 @@ function save() {
   } catch (e) {
     toast('No se pudo guardar. ¿Memoria llena?');
   }
+}
+
+/* ---------- Iconos (trazo 1.8, 24 × 24) ---------- */
+
+const ICONS = {
+  home: '<path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/>',
+  target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',
+  wallet: '<rect x="3" y="6.5" width="18" height="13.5" rx="3"/><path d="M16 13.5h2M6.5 6.5V6a2.5 2.5 0 0 1 2.5-2.5h8"/>',
+  bolt: '<path d="M13.5 2.5 5 13.5h6.5l-1 8 8.5-11h-6.5z"/>',
+  drop: '<path d="M12 3.5s6 6.3 6 10.8a6 6 0 0 1-12 0C6 9.8 12 3.5 12 3.5z"/><path d="M9.5 15a2.5 2.5 0 0 0 2.5 2.5"/>',
+  sliders: '<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>',
+  moon: '<path d="M19.5 14.5A7.5 7.5 0 1 1 9.5 4.5a6 6 0 0 0 10 10z"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  minus: '<path d="M5 12h14"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+  trash: '<path d="M4.5 7h15M10 11v6M14 11v6M6.5 7l1 13h9l1-13M9.5 7V4h5v3"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/>',
+  chevL: '<path d="m14.5 6-6 6 6 6"/>',
+  chevR: '<path d="m9.5 6 6 6-6 6"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+  leaf: '<path d="M5 19.5C5 11 10.5 5 20 4.5c0 9.5-6 15-14 15"/><path d="M5 19.5 13 11.5"/>',
+  heart: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/>',
+  coins: '<ellipse cx="9" cy="7" rx="5.5" ry="2.8"/><path d="M3.5 7v4.5c0 1.5 2.5 2.8 5.5 2.8s5.5-1.3 5.5-2.8V7"/><path d="M14.5 11c3 0 6 1.2 6 2.8v3.4c0 1.5-2.7 2.8-6 2.8-2.1 0-3.9-.5-5-1.3"/>',
+  book: '<path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>',
+  users: '<circle cx="9" cy="8.5" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M15.5 5a3.5 3.5 0 0 1 0 7M17.5 14.5A6 6 0 0 1 21 20"/>',
+  spark: '<path d="M12 3.5 13.8 10l6.7 2-6.7 2L12 20.5 10.2 14 3.5 12l6.7-2z"/>',
+  ball: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5c3 2.5 4 6 3 9.5M20.2 10c-3.5-1-7.3 0-9.7 2.7M7.3 19c-.6-3.8.9-7.3 4.2-9.5"/>',
+  flame: '<path d="M12 21a6 6 0 0 0 6-6c0-4.5-3.5-6.5-4.5-11-2 2-3 4.3-3 6.5-1-.8-1.7-2-1.8-3.2C7 9.5 6 12.3 6 15a6 6 0 0 0 6 6z"/>',
+  download: '<path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/>',
+  upload: '<path d="M12 16V5M7 9.5l5-5 5 5M5 20h14"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  lotus: '<path d="M12 19c-4 0-8-2-8.5-6 2.5-.5 5 .5 6.5 2M12 19c4 0 8-2 8.5-6-2.5-.5-5 .5-6.5 2M12 19c-2.5-2-3.5-4.5-3.5-7S10 6.5 12 5c2 1.5 3.5 4.5 3.5 7S14.5 17 12 19z"/>',
+  scale: '<path d="M12 4v16M6 20h12M5 8h14M8 8l-3 6a3 3 0 0 0 6 0zM16 8l-3 6a3 3 0 0 0 6 0z"/>',
+  bag: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>',
+  trend: '<path d="M3.5 17 9 11.5l3.5 3.5L20 7.5"/><path d="M15 7.5h5v5"/>',
+  bank: '<path d="M3.5 9.5 12 4l8.5 5.5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3.5 20.5h17"/>',
+  piggy: '<path d="M5 11.5c0-3 3-5.5 7-5.5 3 0 5.5 1.3 6.5 3.5h1.5v4h-1.5a6 6 0 0 1-2.5 3V19h-3v-1.5h-3V19H7v-2.5c-1.3-1.2-2-3-2-5z"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/>',
+};
+
+function icon(name, cls = '') {
+  return `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`;
 }
 
 /* ---------- Utilidades ---------- */
@@ -108,7 +153,25 @@ const pct = n => `${Math.round(n)}%`;
 
 function progressBar(p, cls = '') {
   const v = Math.max(0, Math.min(100, p));
-  return `<div class="bar ${cls}" role="progressbar" aria-valuenow="${Math.round(v)}" aria-valuemin="0" aria-valuemax="100"><div style="width:${v}%"></div></div>`;
+  return `<div class="bar ${cls}" role="progressbar" aria-valuenow="${Math.round(v)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${v}%"></i></div>`;
+}
+
+// Anillos de actividad: [{value 0..1, cls}]
+function rings(list, size = 132) {
+  const stroke = 11, gap = 3;
+  const c = size / 2;
+  return `<svg class="rings" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">${list.map((r, i) => {
+    const rad = c - stroke / 2 - i * (stroke + gap);
+    const len = 2 * Math.PI * rad;
+    const v = Math.max(0, Math.min(1, r.value));
+    return `<circle class="track" cx="${c}" cy="${c}" r="${rad}" stroke-width="${stroke}"/>
+      <circle class="ring ${r.cls}" cx="${c}" cy="${c}" r="${rad}" stroke-width="${stroke}"
+        stroke-dasharray="${len}" stroke-dashoffset="${len * (1 - v)}" transform="rotate(-90 ${c} ${c})"/>`;
+  }).join('')}</svg>`;
+}
+
+function pageHead(eyebrow, title, right = '') {
+  return `<header class="page-head"><div><p class="eyebrow">${eyebrow}</p><h1>${title}</h1></div>${right}</header>`;
 }
 
 let toastTimer;
@@ -137,7 +200,8 @@ let modalSubmit = null;
 function openModal(title, body, onSubmit, submitLabel = 'Guardar') {
   const form = $('#modal-form');
   form.innerHTML = `
-    <h2>${esc(title)}</h2>
+    <div class="modal-head"><h2>${esc(title)}</h2>
+      <button type="button" class="icon-btn" data-action="close-modal" aria-label="Cerrar">${icon('x')}</button></div>
     <div class="modal-body">${body}</div>
     <div class="modal-actions">
       <button type="button" class="btn ghost" data-action="close-modal">Cancelar</button>
@@ -145,7 +209,7 @@ function openModal(title, body, onSubmit, submitLabel = 'Guardar') {
     </div>`;
   modalSubmit = onSubmit;
   $('#modal').showModal();
-  const first = form.querySelector('input, select, textarea');
+  const first = form.querySelector('.modal-body input, .modal-body select, .modal-body textarea');
   if (first && !('ontouchstart' in window)) first.focus();
 }
 
@@ -173,13 +237,20 @@ function confirmModal(text, onYes, yesLabel = 'Eliminar') {
 /* ---------- Navegación ---------- */
 
 const VIEWS = {
-  hoy: { title: 'Hoy', render: viewHoy },
-  metas: { title: 'Metas y proyectos', render: viewMetas },
-  finanzas: { title: 'Finanzas', render: viewFinanzas },
-  ejercicio: { title: 'Ejercicio en casa', render: viewEjercicio },
-  piel: { title: 'Skincare', render: viewPiel },
-  ajustes: { title: 'Ajustes', render: viewAjustes },
+  hoy: { render: viewHoy },
+  metas: { render: viewMetas },
+  finanzas: { render: viewFinanzas },
+  ejercicio: { render: viewEjercicio },
+  piel: { render: viewPiel },
+  ajustes: { render: viewAjustes },
 };
+const TABS = [
+  ['hoy', 'Hoy', 'home'],
+  ['metas', 'Metas', 'target'],
+  ['finanzas', 'Dinero', 'wallet'],
+  ['ejercicio', 'Entreno', 'bolt'],
+  ['piel', 'Piel', 'drop'],
+];
 
 function currentView() {
   const v = location.hash.replace('#', '');
@@ -188,12 +259,11 @@ function currentView() {
 
 function render() {
   const v = currentView();
-  $('#view-title').textContent = VIEWS[v].title;
   $('#app').innerHTML = VIEWS[v].render();
   document.querySelectorAll('.tabbar button').forEach(b => {
-    b.classList.toggle('active', b.dataset.view === v);
-    if (b.dataset.view === v) b.setAttribute('aria-current', 'page');
-    else b.removeAttribute('aria-current');
+    const on = b.dataset.view === v;
+    b.classList.toggle('active', on);
+    if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
   });
   if (v === 'finanzas' && ['calc', 'decidir'].includes(S.ui.finTab)) updateCalcs();
 }
@@ -236,16 +306,30 @@ function weeklyCount(id) {
   return S.skin.weeklyLog.filter(l => l.id === id && l.date >= start).length;
 }
 
-function skinChecklist(slot, compact = false) {
+function skinChecklist(slot) {
   const key = today();
   const log = S.skin.log[key];
   const items = S.skin[slot];
   if (!items.length) return '<p class="muted">Sin pasos. Edita tu rutina.</p>';
-  return `<ul class="checklist ${compact ? 'compact' : ''}">${items.map(s => {
+  return `<ul class="checklist">${items.map((s, i) => {
     const on = log && log[slot].includes(s.id);
     return `<li><button class="check ${on ? 'on' : ''}" data-action="skin-toggle" data-slot="${slot}" data-id="${s.id}" aria-pressed="${on}">
-      <span class="box">${on ? '✓' : ''}</span><span>${esc(s.text)}</span></button></li>`;
+      <span class="box">${icon('check')}</span><span class="step-n">${String(i + 1).padStart(2, '0')}</span><span class="label">${esc(s.text)}</span></button></li>`;
   }).join('')}</ul>`;
+}
+
+function skinCard(slot) {
+  const key = today();
+  const done = skinDone(key, slot), total = S.skin[slot].length;
+  const full = total && done === total;
+  return `<section class="card ${full ? 'is-done' : ''}">
+    <div class="card-head">
+      <div class="title-ic ${slot}">${icon(slot === 'am' ? 'sun' : 'moon')}</div>
+      <div class="grow"><p class="eyebrow">Skincare</p><h3>${slot === 'am' ? 'Mañana' : 'Noche'}</h3></div>
+      <span class="pill ${full ? 'lime' : ''}">${done}/${total}</span>
+    </div>
+    ${skinChecklist(slot)}
+  </section>`;
 }
 
 /* ---------- Ejercicio: lógica ---------- */
@@ -268,10 +352,26 @@ function sessionsInLast(days) {
 function doneToday() {
   return S.workout.sessions.find(s => s.date === today());
 }
+function yogaToday() {
+  return S.workout.yoga.includes(today());
+}
 function activeWorkoutDay() {
-  const cur = S.workout.current;
-  if (cur && cur.date === today()) return cur.day;
   return S.ui.workoutPick || nextWorkoutDay();
+}
+// Ejercicios marcados hoy en una sesión (se guardan por sesión para poder cambiar de pestaña).
+function checkedToday(day) {
+  const cur = S.workout.current;
+  if (!cur || cur.date !== today() || !cur.done || Array.isArray(cur.done)) return [];
+  return cur.done[day] || [];
+}
+function groupBlocks(exercises) {
+  const groups = [];
+  exercises.forEach((ex, i) => {
+    let g = groups[groups.length - 1];
+    if (!g || g.block !== ex.block) groups.push(g = { block: ex.block, items: [] });
+    g.items.push({ ex, i });
+  });
+  return groups;
 }
 
 /* ---------- Metas: lógica ---------- */
@@ -285,13 +385,16 @@ function goalArea(id) {
   return GOAL_AREAS.find(a => a.id === id) || GOAL_AREAS[0];
 }
 function deadlineText(g) {
-  if (!g.deadline) return '';
+  if (!g.deadline || g.done) return '';
   const d = daysBetween(today(), g.deadline);
-  if (g.done) return '';
   if (d < 0) return `<span class="tag warn">Vencida hace ${-d} d</span>`;
   if (d === 0) return '<span class="tag warn">Vence hoy</span>';
   if (d <= 30) return `<span class="tag">Faltan ${d} d</span>`;
   return `<span class="tag subtle">${esc(g.deadline.split('-').reverse().join('/'))}</span>`;
+}
+function goalsAverage() {
+  const active = S.goals.filter(g => !g.done);
+  return active.length ? active.reduce((a, g) => a + goalProgress(g), 0) / active.length : 0;
 }
 
 /* ---------- Finanzas: lógica ---------- */
@@ -325,14 +428,16 @@ function monthlyAverages() {
 
 function viewHoy() {
   const key = today();
+  const d = parseKey(key);
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
-  const name = S.settings.name ? `, ${esc(S.settings.name)}` : '';
+  const name = S.settings.name ? `, <em>${esc(S.settings.name)}</em>` : '';
 
-  const streak = skinStreak();
+  const skin = skinRatio(key);
+  const skinTotal = S.skin.am.length + S.skin.pm.length;
   const week = sessionsInLast(7);
-  const mk = monthKey();
-  const fin = monthSummary(mk);
+  const goalsAvg = goalsAverage();
+  const fin = monthSummary(monthKey());
 
   const activeGoals = S.goals.filter(g => !g.done)
     .sort((a, b) => (a.deadline || '9999').localeCompare(b.deadline || '9999')).slice(0, 3);
@@ -340,61 +445,62 @@ function viewHoy() {
   const wDay = activeWorkoutDay();
   const plan = WORKOUT_PLAN[wDay];
   const wDone = doneToday();
-  const tip = SKINCARE_TIPS[parseKey(key).getDate() % SKINCARE_TIPS.length];
-
-  const showAmFirst = hour < 15;
-  const amCard = `<div class="card">
-      <div class="card-head"><h3>☀️ Skincare mañana</h3><span class="count">${skinDone(key, 'am')}/${S.skin.am.length}</span></div>
-      ${skinChecklist('am', true)}</div>`;
-  const pmCard = `<div class="card">
-      <div class="card-head"><h3>🌙 Skincare noche</h3><span class="count">${skinDone(key, 'pm')}/${S.skin.pm.length}</span></div>
-      ${skinChecklist('pm', true)}</div>`;
+  const tip = SKINCARE_TIPS[d.getDate() % SKINCARE_TIPS.length];
+  const streak = skinStreak();
 
   return `
-    <section class="hello">
-      <p class="date">${esc(prettyDate(key))}</p>
-      <h2>${greet}${name} 👋</h2>
+    ${pageHead(`${DAY_NAMES[d.getDay()]} · ${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0, 3)}`, `${greet}${name}.`)}
+
+    <section class="card hero">
+      ${rings([
+        { value: skin, cls: 'r1' },
+        { value: week / 3, cls: 'r2' },
+        { value: goalsAvg / 100, cls: 'r3' },
+      ])}
+      <ul class="legend-list">
+        <li><i class="dot r1"></i><span>Piel</span><b>${skinDone(key, 'am') + skinDone(key, 'pm')}/${skinTotal}</b></li>
+        <li><i class="dot r2"></i><span>Entreno</span><b>${week}/3 <small>sem.</small></b></li>
+        <li><i class="dot r3"></i><span>Metas</span><b>${pct(goalsAvg)}</b></li>
+        <li class="streak">${icon('flame')}<span>${streak} ${streak === 1 ? 'día' : 'días'} de racha</span></li>
+      </ul>
     </section>
 
-    <section class="stats">
-      <a class="stat" href="#piel"><b>${streak}</b><span>días de racha skincare</span></a>
-      <a class="stat" href="#ejercicio"><b>${week}/3</b><span>entrenos esta semana</span></a>
-      <a class="stat" href="#metas"><b>${S.goals.filter(g => g.done).length}/${S.goals.length}</b><span>metas logradas</span></a>
-    </section>
+    <p class="section-label">Ahora</p>
+    ${hour < 15 ? skinCard('am') + skinCard('pm') : skinCard('pm') + skinCard('am')}
 
-    ${showAmFirst ? amCard + pmCard : pmCard + amCard}
+    <a class="card session-card ${wDone ? 'is-done' : ''}" href="#ejercicio">
+      <div class="session-letter">${wDone ? icon('check') : wDay}</div>
+      <div class="grow">
+        <p class="eyebrow">${wDone ? 'Entreno de hoy completado' : `Entreno · ${plan.minutes} min`}</p>
+        <h3>${esc(wDone ? WORKOUT_PLAN[wDone.day].name : plan.name)}</h3>
+        <p class="muted small">${wDone ? 'Recupérate: descanso, yoga o vóley.' : esc(plan.focus)}</p>
+      </div>
+      ${icon('arrow', 'go')}
+    </a>
 
-    <div class="card">
-      <div class="card-head"><h3>💪 Entreno</h3>${wDone ? '<span class="tag ok">Hecho hoy</span>' : ''}</div>
-      ${wDone
-        ? `<p>¡Bien! Completaste <b>${esc(WORKOUT_PLAN[wDone.day].name)}</b>. Mañana descansa o juega vóley.</p>`
-        : `<p><b>Sesión ${wDay}: ${esc(plan.name)}</b><br><span class="muted">${esc(plan.focus)} · unos 30–40 min</span></p>
-           <a class="btn primary block" href="#ejercicio">Empezar entreno</a>`}
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>🎯 Metas en curso</h3><a href="#metas" class="link">Ver todas</a></div>
+    <p class="section-label">Metas en curso <a href="#metas">Ver todas</a></p>
+    <section class="card">
       ${activeGoals.length ? activeGoals.map(g => `
         <div class="mini-goal">
-          <div class="row"><span>${goalArea(g.area).icon} ${esc(g.title)}</span><span class="muted">${pct(goalProgress(g))}</span></div>
+          <div class="row"><span class="with-ic">${icon(goalArea(g.area).icon)}${esc(g.title)}</span><b>${pct(goalProgress(g))}</b></div>
           ${progressBar(goalProgress(g))}
-        </div>`).join('') : '<p class="muted">Aún no tienes metas. ¡Crea la primera!</p><a class="btn block" href="#metas">Crear meta</a>'}
-    </div>
+        </div>`).join('') : `<div class="empty-inline"><p>Aún no tienes metas.</p><a class="btn small" href="#metas">${icon('plus')}Crear la primera</a></div>`}
+    </section>
 
-    <div class="card">
-      <div class="card-head"><h3>💰 Este mes</h3><a href="#finanzas" class="link">Detalle</a></div>
-      <div class="money-row">
-        <div><span class="muted">Ingresos</span><b class="pos">${money(fin.income)}</b></div>
-        <div><span class="muted">Gastos</span><b class="neg">${money(fin.expense)}</b></div>
-        <div><span class="muted">Te queda</span><b>${money(fin.balance)}</b></div>
+    <p class="section-label">Dinero · ${esc(MONTH_NAMES[d.getMonth()])} <a href="#finanzas">Detalle</a></p>
+    <section class="card">
+      <div class="figures">
+        <div><span>Ingresos</span><b class="pos">${money(fin.income)}</b></div>
+        <div><span>Gastos</span><b class="neg">${money(fin.expense)}</b></div>
+        <div><span>Te queda</span><b>${money(fin.balance)}</b></div>
       </div>
       <div class="btn-row">
-        <button class="btn" data-action="tx-add" data-type="out">− Gasto</button>
-        <button class="btn" data-action="tx-add" data-type="in">+ Ingreso</button>
+        <button class="btn" data-action="tx-add" data-type="out">${icon('minus')}Gasto</button>
+        <button class="btn" data-action="tx-add" data-type="in">${icon('plus')}Ingreso</button>
       </div>
-    </div>
+    </section>
 
-    <div class="card tip"><b>💡 Consejo del día:</b> ${esc(tip)}</div>
+    <section class="card quote"><p class="eyebrow">Consejo del día</p><p>${esc(tip)}</p></section>
   `;
 }
 
@@ -404,22 +510,24 @@ function goalCard(g) {
   const p = goalProgress(g);
   const area = goalArea(g.area);
   return `
-    <article class="card goal ${g.done ? 'done' : ''}">
+    <article class="card goal ${g.done ? 'is-done' : ''}">
       <div class="card-head">
-        <h3>${area.icon} ${esc(g.title)}</h3>
-        <span class="count">${pct(p)}</span>
+        <div class="title-ic">${icon(area.icon)}</div>
+        <div class="grow">${g.done ? `<p class="eyebrow">${esc(area.name)}</p>` : ''}<h3>${esc(g.title)}</h3></div>
+        <span class="big-num">${Math.round(p)}<small>%</small></span>
       </div>
-      <div class="tags"><span class="tag subtle">${esc(area.name)}</span>${deadlineText(g)}${g.done ? '<span class="tag ok">Lograda 🎉</span>' : ''}</div>
-      ${progressBar(p, g.done ? 'ok' : '')}
-      ${g.why ? `<p class="why">“${esc(g.why)}”</p>` : ''}
-      ${g.milestones.length ? `<ul class="checklist compact">${g.milestones.map(m => `
+      ${progressBar(p, g.done ? 'lime' : '')}
+      <div class="tags">${deadlineText(g)}${g.done ? '<span class="tag lime">Lograda</span>' : ''}</div>
+      ${g.why ? `<p class="why">${esc(g.why)}</p>` : ''}
+      ${g.milestones.length ? `<ul class="checklist">${g.milestones.map(m => `
         <li><button class="check ${m.done ? 'on' : ''}" data-action="ms-toggle" data-goal="${g.id}" data-id="${m.id}" aria-pressed="${m.done}">
-          <span class="box">${m.done ? '✓' : ''}</span><span>${esc(m.text)}</span></button></li>`).join('')}</ul>` : ''}
-      <div class="btn-row small">
-        ${g.done ? '' : `<button class="btn" data-action="ms-add" data-goal="${g.id}">+ Paso</button>`}
-        <button class="btn" data-action="goal-edit" data-goal="${g.id}">Editar</button>
-        <button class="btn" data-action="goal-done" data-goal="${g.id}">${g.done ? 'Reabrir' : 'Marcar lograda'}</button>
-        <button class="btn ghost danger" data-action="goal-del" data-goal="${g.id}" aria-label="Eliminar meta">🗑</button>
+          <span class="box">${icon('check')}</span><span class="label">${esc(m.text)}</span></button></li>`).join('')}</ul>` : ''}
+      <div class="actions">
+        ${g.done ? '' : `<button class="btn small" data-action="ms-add" data-goal="${g.id}">${icon('plus')}Paso</button>`}
+        <button class="btn small" data-action="goal-done" data-goal="${g.id}">${g.done ? 'Reabrir' : `${icon('check')}Lograda`}</button>
+        <span class="grow"></span>
+        <button class="icon-btn" data-action="goal-edit" data-goal="${g.id}" aria-label="Editar meta">${icon('edit')}</button>
+        <button class="icon-btn" data-action="goal-del" data-goal="${g.id}" aria-label="Eliminar meta">${icon('trash')}</button>
       </div>
     </article>`;
 }
@@ -427,24 +535,28 @@ function goalCard(g) {
 function viewMetas() {
   const active = S.goals.filter(g => !g.done);
   const done = S.goals.filter(g => g.done);
-  const overall = active.length ? active.reduce((a, g) => a + goalProgress(g), 0) / active.length : 0;
-
+  const overall = goalsAverage();
   const byArea = GOAL_AREAS.map(a => ({ area: a, goals: active.filter(g => g.area === a.id) }))
     .filter(x => x.goals.length);
 
   return `
-    <div class="card intro">
-      <p>Divide cada meta en <b>pasos pequeños</b>. Marcar pasos es lo que mueve tu barra de avance.</p>
-      ${active.length ? `<div class="row"><span>Avance promedio de metas activas</span><b>${pct(overall)}</b></div>${progressBar(overall)}` : ''}
-    </div>
-    <button class="btn primary block" data-action="goal-add">+ Nueva meta o proyecto</button>
+    ${pageHead('Proyecto de vida', 'Metas y proyectos', `<button class="fab" data-action="goal-add" aria-label="Nueva meta">${icon('plus')}</button>`)}
 
-    ${byArea.map(x => `<h2 class="section">${x.area.icon} ${esc(x.area.name)}</h2>${x.goals.map(goalCard).join('')}`).join('')}
+    ${S.goals.length ? `<section class="card dark stat-strip">
+      <div><span>Activas</span><b>${active.length}</b></div>
+      <div><span>Logradas</span><b>${done.length}</b></div>
+      <div><span>Avance medio</span><b>${pct(overall)}</b></div>
+    </section>` : ''}
 
-    ${!S.goals.length ? `<div class="empty">
-      <p>🎯</p><p>¿Qué quieres lograr este año?</p>
-      <p class="muted">Ideas: “Ahorrar para un viaje”, “Jugar vóley 2 veces por semana”, “Terminar un curso”, “Leer 12 libros”.</p>
-    </div>` : ''}
+    ${byArea.map(x => `<p class="section-label">${esc(x.area.name)}</p>${x.goals.map(goalCard).join('')}`).join('')}
+
+    ${!S.goals.length ? `<section class="empty">
+      <div class="empty-ic">${icon('target')}</div>
+      <h3>¿Qué quieres lograr este año?</h3>
+      <p class="muted">Divide cada meta en pasos pequeños. Marcar pasos es lo que mueve tu avance.</p>
+      <p class="muted small">Ideas: ahorrar para un viaje, jugar vóley 2 veces por semana, terminar un curso, leer 12 libros.</p>
+      <button class="btn primary" data-action="goal-add">${icon('plus')}Nueva meta</button>
+    </section>` : ''}
 
     ${done.length ? `<details class="done-list"><summary>Metas logradas (${done.length})</summary>${done.map(goalCard).join('')}</details>` : ''}
   `;
@@ -453,7 +565,7 @@ function viewMetas() {
 function goalForm(g = {}) {
   return `
     <label>Meta o proyecto<input name="title" required maxlength="120" value="${esc(g.title)}" placeholder="Ej: Ahorrar para una moto"></label>
-    <label>Área<select name="area">${GOAL_AREAS.map(a => `<option value="${a.id}" ${g.area === a.id ? 'selected' : ''}>${a.icon} ${esc(a.name)}</option>`).join('')}</select></label>
+    <label>Área<select name="area">${GOAL_AREAS.map(a => `<option value="${a.id}" ${g.area === a.id ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select></label>
     <label>Fecha límite (opcional)<input type="date" name="deadline" value="${esc(g.deadline)}"></label>
     <label>¿Por qué es importante para ti?<textarea name="why" rows="2" placeholder="Tu motivación">${esc(g.why)}</textarea></label>
     ${g.id ? `<label>Avance manual (solo si no tiene pasos): <output id="manual-out">${Number(g.manual) || 0}%</output>
@@ -468,6 +580,7 @@ function viewFinanzas() {
   const tabs = [['resumen', 'Resumen'], ['movs', 'Movimientos'], ['calc', 'Intereses'], ['decidir', 'Decidir']];
   const content = { resumen: finResumen, movs: finMovs, calc: finCalc, decidir: finDecidir }[S.ui.finTab] || finResumen;
   return `
+    ${pageHead('Finanzas', 'Tu dinero')}
     <div class="segmented" role="tablist">${tabs.map(([id, label]) =>
       `<button role="tab" aria-selected="${S.ui.finTab === id}" class="${S.ui.finTab === id ? 'active' : ''}" data-action="fin-tab" data-tab="${id}">${label}</button>`).join('')}</div>
     ${content()}`;
@@ -476,9 +589,9 @@ function viewFinanzas() {
 function finMonthNav() {
   const mk = S.ui.finMonth || monthKey();
   return `<div class="month-nav">
-      <button class="icon-btn" data-action="fin-month" data-step="-1" aria-label="Mes anterior">‹</button>
+      <button class="icon-btn" data-action="fin-month" data-step="-1" aria-label="Mes anterior">${icon('chevL')}</button>
       <b>${esc(prettyMonth(mk))}</b>
-      <button class="icon-btn" data-action="fin-month" data-step="1" aria-label="Mes siguiente" ${mk >= monthKey() ? 'disabled' : ''}>›</button>
+      <button class="icon-btn" data-action="fin-month" data-step="1" aria-label="Mes siguiente" ${mk >= monthKey() ? 'disabled' : ''}>${icon('chevR')}</button>
     </div>`;
 }
 
@@ -490,49 +603,52 @@ function finResumen() {
   const max = cats.length ? cats[0][1] : 1;
 
   let advice = '';
-  if (s.count === 0) advice = 'Registra tus ingresos y gastos del mes para ver aquí en qué se va tu dinero.';
+  if (s.count === 0) advice = 'Registra tus ingresos y gastos del mes para ver en qué se va tu dinero.';
   else if (s.income === 0) advice = 'Registra también tus ingresos para calcular cuánto estás ahorrando.';
-  else if (rate < 0) advice = '⚠️ Este mes gastas más de lo que ganas. Revisa las categorías más altas y recorta una.';
-  else if (rate < 10) advice = 'Ahorras menos del 10%. Meta sugerida: separa el ahorro apenas recibes tu ingreso, no lo que sobre.';
-  else if (rate < 20) advice = '👍 Vas bien. Si llegas al 20% de ahorro, tu fondo de emergencia crecerá mucho más rápido.';
-  else advice = '🎉 ¡Excelente! Ahorras más del 20%. Considera poner parte a generar intereses (pestaña Intereses).';
+  else if (rate < 0) advice = 'Este mes gastas más de lo que ganas. Revisa las categorías más altas y recorta una.';
+  else if (rate < 10) advice = 'Ahorras menos del 10 %. Separa el ahorro apenas recibes tu ingreso, no lo que sobre.';
+  else if (rate < 20) advice = 'Vas bien. Si llegas al 20 % de ahorro, tu fondo de emergencia crecerá mucho más rápido.';
+  else advice = 'Excelente: ahorras más del 20 %. Considera poner una parte a generar intereses.';
 
   return `
     ${finMonthNav()}
-    <div class="card">
-      <div class="money-row">
-        <div><span class="muted">Ingresos</span><b class="pos">${money(s.income)}</b></div>
-        <div><span class="muted">Gastos</span><b class="neg">${money(s.expense)}</b></div>
-        <div><span class="muted">Balance</span><b>${money(s.balance)}</b></div>
+    <section class="card dark balance">
+      <p class="eyebrow">Balance del mes</p>
+      <p class="display-num">${money(s.balance)}</p>
+      <div class="figures on-dark">
+        <div><span>Ingresos</span><b>${money(s.income)}</b></div>
+        <div><span>Gastos</span><b>${money(s.expense)}</b></div>
+        <div><span>Ahorro</span><b>${s.income > 0 ? pct(rate) : '—'}</b></div>
       </div>
-      ${s.income > 0 ? `<div class="row"><span>Tasa de ahorro</span><b>${pct(rate)}</b></div>${progressBar(Math.max(0, rate * 5), rate >= 20 ? 'ok' : '')}<p class="muted small">La barra se llena al llegar a 20%.</p>` : ''}
-      <p class="advice">${advice}</p>
-      <div class="btn-row">
-        <button class="btn" data-action="tx-add" data-type="out">− Gasto</button>
-        <button class="btn" data-action="tx-add" data-type="in">+ Ingreso</button>
-      </div>
+      ${s.income > 0 ? progressBar(Math.max(0, rate * 5), 'lime') + '<p class="micro">La barra se llena al llegar a 20 % de ahorro.</p>' : ''}
+    </section>
+    <div class="btn-row">
+      <button class="btn" data-action="tx-add" data-type="out">${icon('minus')}Gasto</button>
+      <button class="btn primary" data-action="tx-add" data-type="in">${icon('plus')}Ingreso</button>
     </div>
+    <p class="note">${advice}</p>
 
-    ${cats.length ? `<div class="card"><h3>¿En qué se va el dinero?</h3>
-      ${cats.map(([c, v]) => `<div class="cat-row"><div class="row"><span>${esc(c)}</span><span>${money(v)} <span class="muted">· ${pct(v / s.expense * 100)}</span></span></div>${progressBar(v / max * 100, 'neg')}</div>`).join('')}
-    </div>` : ''}
+    ${cats.length ? `<p class="section-label">¿En qué se va?</p><section class="card">
+      ${cats.map(([c, v]) => `<div class="cat-row"><div class="row"><span>${esc(c)}</span><span>${money(v)} <span class="muted">${pct(v / s.expense * 100)}</span></span></div>${progressBar(v / max * 100, 'coral')}</div>`).join('')}
+    </section>` : ''}
 
-    <div class="card">
-      <div class="card-head"><h3>🐷 Metas de ahorro</h3><button class="btn small-btn" data-action="sav-add">+ Nueva</button></div>
-      ${S.savings.length ? S.savings.map(sv => {
-        const p = sv.target ? sv.saved / sv.target * 100 : 0;
-        return `<div class="saving">
-          <div class="row"><b>${esc(sv.name)}</b><span>${money(sv.saved)} / ${money(sv.target)}</span></div>
-          ${progressBar(p, p >= 100 ? 'ok' : '')}
-          <div class="btn-row small">
-            <button class="btn" data-action="sav-move" data-id="${sv.id}" data-dir="1">+ Aportar</button>
-            <button class="btn" data-action="sav-move" data-id="${sv.id}" data-dir="-1">− Retirar</button>
-            <button class="btn ghost danger" data-action="sav-del" data-id="${sv.id}" aria-label="Eliminar">🗑</button>
-          </div></div>`;
-      }).join('') : '<p class="muted">Ej: Fondo de emergencia (3 meses de gastos), un viaje, una laptop.</p>'}
-    </div>
+    <p class="section-label">Metas de ahorro <button class="link-btn" data-action="sav-add">${icon('plus')}Nueva</button></p>
+    ${S.savings.length ? S.savings.map(sv => {
+      const p = sv.target ? sv.saved / sv.target * 100 : 0;
+      return `<section class="card saving">
+        <div class="card-head"><div class="title-ic">${icon('piggy')}</div>
+          <div class="grow"><h3>${esc(sv.name)}</h3><p class="muted small">${money(sv.saved)} de ${money(sv.target)}</p></div>
+          <span class="big-num">${Math.round(p)}<small>%</small></span></div>
+        ${progressBar(p, p >= 100 ? 'lime' : '')}
+        <div class="actions">
+          <button class="btn small" data-action="sav-move" data-id="${sv.id}" data-dir="1">${icon('plus')}Aportar</button>
+          <button class="btn small" data-action="sav-move" data-id="${sv.id}" data-dir="-1">${icon('minus')}Retirar</button>
+          <span class="grow"></span>
+          <button class="icon-btn" data-action="sav-del" data-id="${sv.id}" aria-label="Eliminar">${icon('trash')}</button>
+        </div></section>`;
+    }).join('') : '<section class="card"><p class="muted">Ej: fondo de emergencia (3 meses de gastos), un viaje, una laptop.</p></section>'}
 
-    <div class="card tip"><b>Regla 50/30/20:</b> 50% necesidades (vivienda, comida, transporte), 30% gustos, 20% ahorro e inversión. Es una guía, ajústala a tu realidad.</div>
+    <section class="card quote"><p class="eyebrow">Regla 50/30/20</p><p>50 % necesidades, 30 % gustos y 20 % ahorro e inversión. Es una guía: ajústala a tu realidad.</p></section>
   `;
 }
 
@@ -544,26 +660,27 @@ function finMovs() {
   return `
     ${finMonthNav()}
     <div class="btn-row">
-      <button class="btn primary" data-action="tx-add" data-type="out">− Gasto</button>
-      <button class="btn primary" data-action="tx-add" data-type="in">+ Ingreso</button>
+      <button class="btn" data-action="tx-add" data-type="out">${icon('minus')}Gasto</button>
+      <button class="btn primary" data-action="tx-add" data-type="in">${icon('plus')}Ingreso</button>
     </div>
     ${list.length ? Object.entries(groups).map(([d, items]) => `
-      <h2 class="section small">${esc(prettyDate(d))}</h2>
-      <div class="card list">${items.map(t => `
+      <p class="section-label cap">${esc(prettyDate(d))}</p>
+      <section class="card list">${items.map(t => `
         <div class="tx">
-          <div><b>${esc(t.category)}</b>${t.note ? `<br><span class="muted">${esc(t.note)}</span>` : ''}</div>
-          <div class="tx-right"><b class="${t.type === 'in' ? 'pos' : 'neg'}">${t.type === 'in' ? '+' : '−'} ${money(t.amount)}</b>
-          <button class="icon-btn" data-action="tx-del" data-id="${t.id}" aria-label="Eliminar movimiento">✕</button></div>
-        </div>`).join('')}</div>`).join('')
-      : '<div class="empty"><p>📒</p><p>Sin movimientos este mes.</p></div>'}
+          <div class="tx-ic ${t.type}">${icon(t.type === 'in' ? 'plus' : 'minus')}</div>
+          <div class="grow"><b>${esc(t.category)}</b>${t.note ? `<span class="muted small">${esc(t.note)}</span>` : ''}</div>
+          <b class="${t.type === 'in' ? 'pos' : ''}">${t.type === 'in' ? '+' : '−'}${money(t.amount)}</b>
+          <button class="icon-btn subtle" data-action="tx-del" data-id="${t.id}" aria-label="Eliminar movimiento">${icon('x')}</button>
+        </div>`).join('')}</section>`).join('')
+      : `<section class="empty"><div class="empty-ic">${icon('wallet')}</div><p class="muted">Sin movimientos este mes.</p></section>`}
   `;
 }
 
 function finCalc() {
   return `
-    <div class="card calc" data-calc="compound">
-      <h3>📈 ¿Cuánto crece mi ahorro?</h3>
-      <p class="muted small">Interés compuesto: tus intereses también generan intereses.</p>
+    <section class="card calc" data-calc="compound">
+      <div class="card-head"><div class="title-ic">${icon('trend')}</div>
+        <div class="grow"><h3>¿Cuánto crece mi ahorro?</h3><p class="muted small">Interés compuesto: tus intereses también generan intereses.</p></div></div>
       <div class="grid2">
         <label>Monto inicial<input type="number" inputmode="decimal" min="0" name="p" value="1000"></label>
         <label>Aporte mensual<input type="number" inputmode="decimal" min="0" name="m" value="200"></label>
@@ -571,19 +688,20 @@ function finCalc() {
         <label>Años<input type="number" inputmode="numeric" min="1" max="50" name="y" value="5"></label>
       </div>
       <div class="result" id="res-compound"></div>
-    </div>
+    </section>
 
-    <div class="card calc" data-calc="loan">
-      <h3>🏦 ¿Cuánto pagaré por un préstamo o compra a cuotas?</h3>
+    <section class="card calc" data-calc="loan">
+      <div class="card-head"><div class="title-ic">${icon('bank')}</div>
+        <div class="grow"><h3>¿Cuánto pagaré por un préstamo?</h3><p class="muted small">También sirve para compras a cuotas.</p></div></div>
       <div class="grid2">
         <label>Monto<input type="number" inputmode="decimal" min="0" name="a" value="5000"></label>
         <label>Tasa anual %<input type="number" inputmode="decimal" min="0" step="0.1" name="r" value="18"></label>
         <label>Plazo (meses)<input type="number" inputmode="numeric" min="1" name="n" value="12"></label>
       </div>
       <div class="result" id="res-loan"></div>
-    </div>
+    </section>
 
-    <div class="card tip"><b>Recuerda:</b> el interés compuesto trabaja a tu favor cuando ahorras y en tu contra cuando te endeudas. Compara siempre la tasa anual (TEA) entre bancos.</div>
+    <section class="card quote"><p class="eyebrow">Recuerda</p><p>El interés compuesto trabaja a tu favor cuando ahorras y en tu contra cuando te endeudas. Compara siempre la tasa anual entre bancos.</p></section>
   `;
 }
 
@@ -596,7 +714,7 @@ function updateCalcs() {
     for (let i = 0; i < months; i++) total = total * (1 + r) + m;
     const put = p + m * months;
     $('#res-compound').innerHTML = `
-      <div class="row"><span>Tendrás</span><b class="pos big">${money(total)}</b></div>
+      <p class="eyebrow">Tendrás</p><p class="display-num pos">${money(total)}</p>
       <div class="row"><span>Pusiste de tu bolsillo</span><span>${money(put)}</span></div>
       <div class="row"><span>Ganado en intereses</span><b class="pos">${money(total - put)}</b></div>`;
   }
@@ -610,12 +728,12 @@ function updateCalcs() {
     let note = '';
     if (avg && avg.income > 0) {
       const share = pay / avg.income * 100;
-      note = `<p class="advice">La cuota sería el <b>${pct(share)}</b> de tu ingreso mensual promedio. ${share > 30
-        ? '⚠️ Más del 30% es arriesgado: busca un plazo mayor, un monto menor o ahorra primero.'
-        : share > 15 ? 'Es manejable, pero cuida no sumar otras deudas.' : '✅ Es una cuota cómoda para tus ingresos.'}</p>`;
+      note = `<p class="note">La cuota sería el <b>${pct(share)}</b> de tu ingreso mensual promedio. ${share > 30
+        ? 'Más del 30 % es arriesgado: busca un plazo mayor, un monto menor o ahorra primero.'
+        : share > 15 ? 'Es manejable, pero cuida no sumar otras deudas.' : 'Es una cuota cómoda para tus ingresos.'}</p>`;
     }
     $('#res-loan').innerHTML = `
-      <div class="row"><span>Cuota mensual</span><b class="big">${money(pay)}</b></div>
+      <p class="eyebrow">Cuota mensual</p><p class="display-num">${money(pay)}</p>
       <div class="row"><span>Pagarás en total</span><span>${money(total)}</span></div>
       <div class="row"><span>De eso, intereses</span><b class="neg">${money(total - a)}</b></div>${note}`;
   }
@@ -628,26 +746,27 @@ let buyDraft = {};
 function finDecidir() {
   const bv = n => esc(buyDraft[n] ?? '');
   const bc = n => (buyDraft[n] ? 'checked' : '');
+  const qs = [
+    ['q1', 'Lo necesito (no solo lo quiero)'],
+    ['q2', 'Lo voy a usar al menos 1 vez por semana'],
+    ['q3', 'Lo puedo pagar sin endeudarme'],
+    ['q4', 'Lo quería desde hace más de una semana'],
+    ['q5', 'Comparé precios en al menos 2 lugares'],
+  ];
   return `
-    <div class="card calc" data-calc="buy">
-      <h3>🛍️ ¿Me lo compro?</h3>
-      <label>¿Qué quieres comprar?<input name="what" value="${bv('what')}" placeholder="Ej: zapatillas de vóley" maxlength="80"></label>
-      <label>Precio<input type="number" inputmode="decimal" min="0" name="price" value="${bv('price')}" placeholder="0"></label>
-      <fieldset class="questions">
-        <legend>Responde con honestidad</legend>
-        <label class="inline"><input type="checkbox" name="q1" ${bc('q1')}> Lo necesito (no solo lo quiero)</label>
-        <label class="inline"><input type="checkbox" name="q2" ${bc('q2')}> Lo voy a usar al menos 1 vez por semana</label>
-        <label class="inline"><input type="checkbox" name="q3" ${bc('q3')}> Lo puedo pagar sin endeudarme</label>
-        <label class="inline"><input type="checkbox" name="q4" ${bc('q4')}> Lo quería desde hace más de una semana</label>
-        <label class="inline"><input type="checkbox" name="q5" ${bc('q5')}> Comparé precios en al menos 2 lugares</label>
-      </fieldset>
+    <section class="card calc" data-calc="buy">
+      <div class="card-head"><div class="title-ic">${icon('bag')}</div>
+        <div class="grow"><h3>¿Me lo compro?</h3><p class="muted small">Responde con honestidad.</p></div></div>
+      <div class="grid2">
+        <label>¿Qué es?<input name="what" value="${bv('what')}" placeholder="Zapatillas de vóley" maxlength="80"></label>
+        <label>Precio<input type="number" inputmode="decimal" min="0" name="price" value="${bv('price')}" placeholder="0"></label>
+      </div>
+      <div class="toggles">${qs.map(([q, t]) => `<label class="toggle"><input type="checkbox" name="${q}" ${bc(q)}><span class="sw"></span><span>${t}</span></label>`).join('')}</div>
       <div class="result" id="res-buy"></div>
-    </div>
+    </section>
 
-    <div class="card">
-      <div class="card-head"><h3>⚖️ Comparar opciones</h3><button class="btn small-btn" data-action="dec-add">+ Nueva decisión</button></div>
-      <p class="muted small">Para decisiones grandes: pon tus opciones, lo que te importa y califica. La app calcula cuál conviene más.</p>
-    </div>
+    <p class="section-label">Comparar opciones <button class="link-btn" data-action="dec-add">${icon('plus')}Nueva</button></p>
+    ${S.decisions.length ? '' : `<section class="card"><div class="card-head"><div class="title-ic">${icon('scale')}</div><p class="muted small grow">Para decisiones grandes: pon tus opciones y lo que te importa, califica, y la app calcula cuál conviene más.</p></div></section>`}
     ${S.decisions.slice().reverse().map(decisionCard).join('')}
   `;
 }
@@ -657,7 +776,7 @@ function updateBuy(b) {
   const what = b.querySelector('[name=what]').value.trim() || 'esto';
   const yes = ['q1', 'q2', 'q3', 'q4', 'q5'].filter(q => b.querySelector(`[name=${q}]`).checked).length;
   const out = $('#res-buy');
-  if (!price) { out.innerHTML = '<p class="muted">Pon el precio para ver el análisis.</p>'; return; }
+  if (!price) { out.innerHTML = '<p class="muted small">Pon el precio para ver el análisis.</p>'; return; }
 
   const avg = monthlyAverages();
   const free = avg ? avg.income - avg.expense : null;
@@ -678,14 +797,13 @@ function updateBuy(b) {
   } else {
     lines.push('<span class="muted">Registra tus ingresos y gastos para un análisis con tus números reales.</span>');
   }
-  const costPerUse = b.querySelector('[name=q2]').checked ? price / 52 : null;
-  if (costPerUse) lines.push(`Usándolo cada semana por un año, cuesta ${money(costPerUse)} por uso.`);
+  if (b.querySelector('[name=q2]').checked) lines.push(`Usándolo cada semana por un año, cuesta ${money(price / 52)} por uso.`);
 
   let verdict;
-  if (!b.querySelector('[name=q3]').checked) verdict = `<div class="verdict no">✋ No lo compres ahora. Si te endeudarías por ${esc(what)}, primero crea una meta de ahorro.</div>`;
-  else if (score >= 4) verdict = '<div class="verdict yes">✅ Parece una buena compra. ¡Adelante!</div>';
-  else if (score >= 2) verdict = '<div class="verdict wait">⏳ Espera 48 horas. Si después lo sigues queriendo igual, cómpralo.</div>';
-  else verdict = '<div class="verdict no">✋ Mejor no por ahora. Ese dinero puede ir a una de tus metas.</div>';
+  if (!b.querySelector('[name=q3]').checked) verdict = `<div class="verdict no"><b>No lo compres ahora.</b> Si te endeudarías por ${esc(what)}, primero crea una meta de ahorro.</div>`;
+  else if (score >= 4) verdict = '<div class="verdict yes"><b>Buena compra.</b> Adelante.</div>';
+  else if (score >= 2) verdict = '<div class="verdict wait"><b>Espera 48 horas.</b> Si después lo sigues queriendo igual, cómpralo.</div>';
+  else verdict = '<div class="verdict no"><b>Mejor no por ahora.</b> Ese dinero puede ir a una de tus metas.</div>';
 
   out.innerHTML = `${verdict}<ul class="facts">${lines.map(l => `<li>${l}</li>`).join('')}</ul>`;
 }
@@ -701,99 +819,147 @@ function decisionCard(d) {
   const filled = d.scores.some(r => r.some(Boolean));
   return `
     <article class="card decision">
-      <div class="card-head"><h3>${esc(d.question)}</h3>
-        <button class="icon-btn" data-action="dec-del" data-id="${d.id}" aria-label="Eliminar decisión">🗑</button></div>
+      <div class="card-head"><div class="title-ic">${icon('scale')}</div><h3 class="grow">${esc(d.question)}</h3>
+        <button class="icon-btn" data-action="dec-del" data-id="${d.id}" aria-label="Eliminar decisión">${icon('trash')}</button></div>
       <p class="muted small">Califica cada opción del 1 (mal) al 5 (excelente).</p>
       <div class="matrix-wrap"><table class="matrix">
-        <thead><tr><th>Criterio <span class="muted">(peso)</span></th>${d.options.map(o => `<th>${esc(o)}</th>`).join('')}</tr></thead>
+        <thead><tr><th>Criterio</th>${d.options.map(o => `<th>${esc(o)}</th>`).join('')}</tr></thead>
         <tbody>${d.criteria.map((c, ci) => `<tr><td>${esc(c.name)} <span class="muted">×${c.weight}</span></td>
           ${d.options.map((_, oi) => `<td><select data-change="dec-score" data-id="${d.id}" data-o="${oi}" data-c="${ci}" aria-label="${esc(c.name)}">
             <option value="0">–</option>${[1, 2, 3, 4, 5].map(v => `<option ${d.scores[oi]?.[ci] === v ? 'selected' : ''}>${v}</option>`).join('')}
           </select></td>`).join('')}</tr>`).join('')}</tbody>
-        <tfoot><tr><td><b>Puntaje</b></td>${scores.map(s => `<td class="${filled && s === best ? 'winner' : ''}"><b>${s.toFixed(1)}</b></td>`).join('')}</tr></tfoot>
+        <tfoot><tr><td>Puntaje</td>${scores.map(s => `<td class="${filled && s === best ? 'winner' : ''}">${s.toFixed(1)}</td>`).join('')}</tr></tfoot>
       </table></div>
-      ${filled ? `<p class="advice">Según lo que más te importa, gana <b>${esc(d.options[scores.indexOf(best)])}</b>. Si tu intuición dice otra cosa, quizá falte un criterio.</p>` : ''}
+      ${filled ? `<p class="note">Según lo que más te importa, gana <b>${esc(d.options[scores.indexOf(best)])}</b>. Si tu intuición dice otra cosa, quizá falte un criterio.</p>` : ''}
     </article>`;
 }
 
 /* ----- Ejercicio ----- */
 
 function viewEjercicio() {
+  const tab = S.ui.workoutTab === 'guia' ? 'guia' : 'plan';
+  return `
+    ${pageHead('Entreno en casa · vóley', tab === 'guia' ? 'La ciencia detrás' : 'Tu plan')}
+    <div class="segmented">
+      <button class="${tab === 'plan' ? 'active' : ''}" data-action="workout-tab" data-tab="plan">Plan</button>
+      <button class="${tab === 'guia' ? 'active' : ''}" data-action="workout-tab" data-tab="guia">Guía científica</button>
+    </div>
+    ${tab === 'guia' ? workoutGuide() : workoutPlan()}`;
+}
+
+function workoutPlan() {
   const W = S.workout;
   const level = W.level;
   const atLevel = sessionsAtLevel();
+  const weekNum = Math.min(4, Math.floor(atLevel / 3) + 1);
   const day = activeWorkoutDay();
   const plan = WORKOUT_PLAN[day];
-  const cur = W.current && W.current.date === today() && W.current.day === day ? W.current : null;
-  const checked = cur ? cur.done : [];
+  const checked = checkedToday(day);
   const wDone = doneToday();
+  const isYoga = !!plan.optional;
+  const ready = atLevel >= SESSIONS_TO_LEVEL_UP;
 
-  // Últimos 7 días
   const week = [];
   for (let i = 6; i >= 0; i--) {
     const k = addDays(today(), -i);
     const s = W.sessions.find(x => x.date === k);
     const v = W.volley.includes(k);
-    week.push(`<div class="day ${s ? 'done' : ''} ${v ? 'volley' : ''} ${i === 0 ? 'today' : ''}">
-      <span>${DAY_SHORT[parseKey(k).getDay()]}</span><b>${s ? s.day : v ? '🏐' : '·'}</b></div>`);
+    const y = W.yoga.includes(k);
+    const mark = s ? s.day : v ? icon('ball') : y ? icon('lotus') : '';
+    week.push(`<div class="day ${s ? 'done' : ''} ${!s && (v || y) ? 'extra' : ''} ${i === 0 ? 'today' : ''}">
+      <span>${DAY_SHORT[parseKey(k).getDay()]}</span><b>${mark}</b></div>`);
   }
 
   return `
-    <div class="card">
-      <div class="card-head"><h3>Nivel ${level} de 3</h3><span class="count">${Math.min(atLevel, SESSIONS_TO_LEVEL_UP)}/${SESSIONS_TO_LEVEL_UP}</span></div>
-      ${progressBar(atLevel / SESSIONS_TO_LEVEL_UP * 100, atLevel >= SESSIONS_TO_LEVEL_UP ? 'ok' : '')}
-      <p class="muted small">${atLevel >= SESSIONS_TO_LEVEL_UP && level < 3
-        ? '¡Listo para subir de nivel! Si los ejercicios ya se sienten fáciles, súbelo.'
-        : `Plan: 3 sesiones por semana (ej. lunes, miércoles y viernes). Completa ${SESSIONS_TO_LEVEL_UP} sesiones para subir.`}</p>
-      <div class="btn-row small">
-        ${level < 3 ? `<button class="btn ${atLevel >= SESSIONS_TO_LEVEL_UP ? 'primary' : ''}" data-action="level" data-dir="1">Subir nivel</button>` : ''}
-        ${level > 1 ? '<button class="btn" data-action="level" data-dir="-1">Bajar nivel</button>' : ''}
+    <section class="card dark level">
+      <div class="level-top">
+        <div><p class="eyebrow">Nivel ${level} de 3 · semana ${weekNum} de 4</p>
+          <p class="display-num">${Math.min(atLevel, SESSIONS_TO_LEVEL_UP)}<small>/${SESSIONS_TO_LEVEL_UP} sesiones</small></p></div>
+        ${rings([{ value: atLevel / SESSIONS_TO_LEVEL_UP, cls: 'r2' }], 64)}
       </div>
-    </div>
+      <p class="micro">${ready && level < 3
+        ? '¡Listo para subir! Si los ejercicios ya se sienten fáciles, sube de nivel.'
+        : '3 sesiones por semana, con un día de descanso entre ellas. 12 semanas en total.'}</p>
+      <div class="actions">
+        ${level < 3 ? `<button class="btn small ${ready ? 'lime' : 'on-dark'}" data-action="level" data-dir="1">Subir nivel</button>` : ''}
+        ${level > 1 ? '<button class="btn small on-dark" data-action="level" data-dir="-1">Bajar nivel</button>' : ''}
+      </div>
+    </section>
 
-    <div class="card">
-      <div class="card-head"><h3>Últimos 7 días</h3><span class="count">${sessionsInLast(7)} entrenos</span></div>
+    <section class="card">
+      <div class="card-head"><h3 class="grow">Últimos 7 días</h3><span class="pill">${sessionsInLast(7)} entrenos</span></div>
       <div class="week">${week.join('')}</div>
-      <div class="btn-row small">
-        <button class="btn" data-action="volley">${W.volley.includes(today()) ? '🏐 Quitar vóley de hoy' : '🏐 Hoy jugué vóley'}</button>
-        <button class="btn" data-action="ics-workout">⏰ Recordatorios</button>
+      <div class="actions">
+        <button class="btn small" data-action="volley">${icon('ball')}${W.volley.includes(today()) ? 'Quitar vóley' : 'Hoy jugué vóley'}</button>
+        <button class="btn small" data-action="ics-workout">${icon('bell')}Recordatorio</button>
       </div>
-    </div>
+    </section>
 
-    ${wDone ? `<div class="card done-banner">✅ Ya completaste la sesión de hoy (${esc(WORKOUT_PLAN[wDone.day].name)}). ¡Descansa y recupérate!</div>` : ''}
+    <p class="section-label">Elige la sesión</p>
+    <div class="session-picker">${[...WORKOUT_ORDER, 'Y'].map(d => {
+      const p = WORKOUT_PLAN[d];
+      return `<button class="${d === day ? 'active' : ''}" data-action="pick-workout" data-day="${d}">
+        <b>${d === 'Y' ? icon('lotus') : d}</b><span>${esc(p.short)}</span>${d === nextWorkoutDay() ? '<i>te toca</i>' : ''}</button>`;
+    }).join('')}</div>
 
-    <div class="segmented">${WORKOUT_ORDER.map(d => `<button class="${d === day ? 'active' : ''}" data-action="pick-workout" data-day="${d}">${d} · ${esc(WORKOUT_PLAN[d].short)}</button>`).join('')}</div>
+    ${wDone && !isYoga ? `<section class="card banner">${icon('check')}<p>Ya completaste la sesión de hoy (${esc(WORKOUT_PLAN[wDone.day].name)}). Descansa o haz yoga.</p></section>` : ''}
 
-    <div class="card">
-      <h3>Sesión ${day}: ${esc(plan.name)}</h3>
-      <p class="muted">${esc(plan.focus)}${day === nextWorkoutDay() ? ' · <b>te toca hoy</b>' : ''}</p>
+    <section class="card session">
+      <p class="eyebrow">${isYoga ? 'Opcional · días de descanso' : `Sesión ${day}`} · ${plan.minutes} min</p>
+      <h2>${esc(plan.name)}</h2>
+      <p class="muted">${esc(plan.focus)}</p>
 
-      <details class="block-list"><summary>🔥 Calentamiento (5 min)</summary><ul>${WARMUP.map(w => `<li>${esc(w)}</li>`).join('')}</ul></details>
+      ${isYoga ? '' : `<details class="block-list"><summary><span>Calentamiento dinámico</span><small>8 min</small></summary>
+        <ol>${WARMUP.map(w => `<li>${esc(w)}</li>`).join('')}</ol>
+        <p class="micro">Solo movimiento: los estiramientos largos van al final.</p></details>`}
 
-      <ul class="checklist exercises">${plan.exercises.map((ex, i) => {
-        const on = checked.includes(i);
-        return `<li>
-          <button class="check ${on ? 'on' : ''}" data-action="ex-toggle" data-day="${day}" data-i="${i}" aria-pressed="${on}">
-            <span class="box">${on ? '✓' : ''}</span>
-            <span><b>${esc(ex.name)}</b><br><span class="reps">${esc(ex.reps[level - 1])}</span></span>
-          </button>
-          <details class="tipbox"><summary>Cómo hacerlo</summary><p>${esc(ex.tip)}</p></details>
-        </li>`;
-      }).join('')}</ul>
-      <p class="muted small">Descansa 45–60 s entre series. Si algo duele (no es cansancio), detente.</p>
+      ${groupBlocks(plan.exercises).map(g => `
+        <p class="block-label">${esc(g.block)}</p>
+        <ul class="checklist exercises">${g.items.map(({ ex, i }) => {
+          const on = checked.includes(i);
+          return `<li>
+            <button class="check ${on ? 'on' : ''}" data-action="ex-toggle" data-day="${day}" data-i="${i}" aria-pressed="${on}">
+              <span class="box">${icon('check')}</span>
+              <span class="label"><b>${esc(ex.name)}</b><span class="reps">${esc(ex.reps[level - 1])}</span></span>
+            </button>
+            <details class="tipbox"><summary>Cómo hacerlo</summary><p>${esc(ex.tip)}</p></details>
+          </li>`;
+        }).join('')}</ul>`).join('')}
 
-      <details class="block-list"><summary>🧘 Estiramiento final (3 min)</summary><ul>${COOLDOWN.map(w => `<li>${esc(w)}</li>`).join('')}</ul></details>
+      ${isYoga ? '' : `<details class="block-list"><summary><span>Estiramiento y yoga final</span><small>5–8 min</small></summary>
+        <ol>${COOLDOWN.map(w => `<li>${esc(w)}</li>`).join('')}</ol>
+        <p class="micro">2 × 30 s cada postura, con tensión leve, nunca dolor.</p></details>`}
 
-      ${wDone ? '' : `<button class="btn primary block" data-action="finish-workout" data-day="${day}">Terminé la sesión 💪</button>`}
-    </div>
+      <p class="micro">${isYoga ? 'Respira lento y nunca fuerces una postura.' : 'Descansa 60–90 s en potencia y 1–2 min en fuerza. Si algo duele (no es cansancio), detente.'}</p>
 
-    <div class="card tip"><b>🏐 Para el vóley:</b> la sesión A te ayuda a saltar más alto, la B protege tu hombro al rematar y la C te da reacción y estabilidad en defensa. Un día después de jugar, mejor descansa o haz solo estiramiento.</div>
+      ${isYoga
+        ? (yogaToday() ? `<div class="banner-inline">${icon('check')}Yoga de hoy registrado</div>` : `<button class="btn primary block" data-action="finish-yoga">Terminé el yoga</button>`)
+        : (wDone ? '' : `<button class="btn primary block" data-action="finish-workout" data-day="${day}">Terminé la sesión</button>`)}
+    </section>
 
-    <div class="card">
+    <section class="card">
       <h3>Historial</h3>
-      <p>Total: <b>${W.sessions.length}</b> sesiones · <b>${W.volley.length}</b> partidos de vóley</p>
-      ${W.sessions.slice(-5).reverse().map(s => `<div class="row"><span>${esc(prettyDate(s.date))}</span><span>${s.day} · nivel ${s.level}</span></div>`).join('') || '<p class="muted">Tu primera sesión aparecerá aquí.</p>'}
-    </div>
+      <div class="figures">
+        <div><span>Sesiones</span><b>${W.sessions.length}</b></div>
+        <div><span>Vóley</span><b>${W.volley.length}</b></div>
+        <div><span>Yoga</span><b>${W.yoga.length}</b></div>
+      </div>
+      ${W.sessions.slice(-5).reverse().map(s => `<div class="row hist"><span class="cap">${esc(prettyDate(s.date))}</span><span class="muted">${s.day} · nivel ${s.level}</span></div>`).join('')}
+    </section>
+  `;
+}
+
+function workoutGuide() {
+  return `
+    <section class="card quote"><p>Tu plan sigue lo que recomiendan la OMS, el Colegio Americano de Medicina del Deporte y estudios científicos revisados por pares. Esto es educación general: si tienes una lesión o dolor persistente, consulta a un profesional.</p></section>
+    ${GUIDE.map(g => `
+      <section class="card guide">
+        <div class="card-head"><h3 class="grow">${esc(g.title)}</h3><span class="tag subtle">${esc(g.tag)}</span></div>
+        <ul class="dash">${g.points.map(p => `<li>${esc(p)}</li>`).join('')}</ul>
+        <p class="refs">${g.sources.map(i => `<a href="${GUIDE_SOURCES[i].url}" target="_blank" rel="noopener">[${i + 1}]</a>`).join(' ')}</p>
+      </section>`).join('')}
+    <p class="section-label">Fuentes</p>
+    <section class="card"><ol class="sources">${GUIDE_SOURCES.map(s => `<li><a href="${s.url}" target="_blank" rel="noopener">${esc(s.label)}</a></li>`).join('')}</ol></section>
   `;
 }
 
@@ -816,45 +982,40 @@ function viewPiel() {
   }
 
   return `
-    <section class="stats two">
-      <div class="stat"><b>${streak} 🔥</b><span>días seguidos completos</span></div>
-      <div class="stat"><b>${full}/28</b><span>días completos (4 semanas)</span></div>
+    ${pageHead('Skincare', 'Tu rutina', `<button class="icon-btn boxed" data-action="skin-edit" aria-label="Editar rutina">${icon('edit')}</button>`)}
+
+    <section class="card dark stat-strip">
+      <div><span>Racha</span><b>${streak}<small> días</small></b></div>
+      <div><span>Completos</span><b>${full}<small>/28</small></b></div>
+      <div><span>Hoy</span><b>${Math.round(skinRatio(key) * 100)}<small>%</small></b></div>
     </section>
 
-    <div class="card">
-      <div class="card-head"><h3>☀️ Mañana</h3><span class="count">${skinDone(key, 'am')}/${S.skin.am.length}</span></div>
-      ${skinChecklist('am')}
-    </div>
-    <div class="card">
-      <div class="card-head"><h3>🌙 Noche</h3><span class="count">${skinDone(key, 'pm')}/${S.skin.pm.length}</span></div>
-      ${skinChecklist('pm')}
-    </div>
+    ${skinCard('am')}
+    ${skinCard('pm')}
 
-    <div class="card">
-      <h3>📅 Esta semana</h3>
+    <p class="section-label">Esta semana</p>
+    <section class="card">
       ${S.skin.weekly.map(w => {
         const n = weeklyCount(w.id);
         const doneToday = S.skin.weeklyLog.some(l => l.id === w.id && l.date === key);
         return `<div class="weekly">
-          <div><b>${esc(w.text)}</b><br><span class="muted small">${n}/${w.times} veces esta semana</span></div>
-          <button class="btn small-btn ${n >= w.times ? 'ok' : ''}" data-action="weekly-toggle" data-id="${w.id}">${doneToday ? '✓ Hoy' : 'Lo hice hoy'}</button>
+          <div class="grow"><b>${esc(w.text)}</b><div class="dots">${Array.from({ length: w.times }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}<span class="muted small">${n}/${w.times}</span></div></div>
+          <button class="btn small ${doneToday ? 'lime' : ''}" data-action="weekly-toggle" data-id="${w.id}">${doneToday ? `${icon('check')}Hoy` : 'Lo hice'}</button>
         </div>`;
       }).join('') || '<p class="muted">Sin tareas semanales.</p>'}
-    </div>
+    </section>
 
-    <div class="card">
-      <h3>Últimas 4 semanas</h3>
+    <p class="section-label">Últimas 4 semanas</p>
+    <section class="card">
       <div class="cal-head">${['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(d => `<span>${d}</span>`).join('')}</div>
       <div class="cal">${cells.join('')}</div>
-      <p class="legend"><span class="cell full"></span> completo <span class="cell half"></span> a medias <span class="cell"></span> nada</p>
-    </div>
+      <p class="legend"><i class="cell full"></i>Completo <i class="cell half"></i>A medias <i class="cell"></i>Nada</p>
+    </section>
 
-    <div class="btn-row">
-      <button class="btn" data-action="skin-edit">✏️ Editar rutina</button>
-      <button class="btn" data-action="ics-skin">⏰ Recordatorios</button>
-    </div>
+    <button class="btn block" data-action="ics-skin">${icon('bell')}Recordatorios en mi calendario</button>
 
-    <div class="card tip"><b>💡 Tips:</b><ul>${SKINCARE_TIPS.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
+    <p class="section-label">Tips</p>
+    <section class="card"><ul class="dash">${SKINCARE_TIPS.map(t => `<li>${esc(t)}</li>`).join('')}</ul></section>
   `;
 }
 
@@ -862,33 +1023,32 @@ function viewPiel() {
 
 function viewAjustes() {
   return `
-    <div class="card">
-      <h3>Tus datos</h3>
+    ${pageHead('Ajustes', 'Tu app')}
+    <section class="card">
       <label>Tu nombre<input data-change="setting" name="name" value="${esc(S.settings.name)}" maxlength="40" placeholder="¿Cómo te llamo?"></label>
       <label>Moneda<input data-change="setting" name="currency" value="${esc(S.settings.currency)}" maxlength="6" placeholder="Bs"></label>
-    </div>
+    </section>
 
-    <div class="card">
-      <h3>📲 Instalar en tu celular</h3>
-      <p><b>Android (Chrome):</b> menú ⋮ → <i>Instalar aplicación</i> o <i>Agregar a pantalla principal</i>.</p>
-      <p><b>iPhone (Safari):</b> botón Compartir ⬆️ → <i>Agregar a inicio</i>.</p>
-      <p class="muted small">Funciona sin internet una vez instalada.</p>
-    </div>
+    <p class="section-label">Instalar en tu celular</p>
+    <section class="card">
+      <p><b>Android (Chrome):</b> menú ⋮ → <i>Instalar aplicación</i>.</p>
+      <p><b>iPhone (Safari):</b> Compartir → <i>Agregar a inicio</i>.</p>
+      <p class="micro">Funciona sin internet una vez instalada.</p>
+    </section>
 
-    <div class="card">
-      <h3>💾 Copia de seguridad</h3>
+    <p class="section-label">Copia de seguridad</p>
+    <section class="card">
       <p class="muted small">Tus datos se guardan solo en este celular. Descarga una copia de vez en cuando, o para pasarlos a otro teléfono.</p>
       <div class="btn-row">
-        <button class="btn" data-action="export">Descargar copia</button>
-        <label class="btn file-btn">Restaurar copia<input type="file" accept="application/json,.json" data-change="import" hidden></label>
+        <button class="btn" data-action="export">${icon('download')}Descargar</button>
+        <label class="btn file-btn">${icon('upload')}Restaurar<input type="file" accept="application/json,.json" data-change="import" hidden></label>
       </div>
-    </div>
+    </section>
 
-    <div class="card">
-      <h3>Zona peligrosa</h3>
-      <button class="btn danger" data-action="reset">Borrar todos mis datos</button>
-    </div>
-    <p class="muted small center">Mi Proyecto de Vida · v1</p>
+    <section class="card danger-zone">
+      <button class="btn danger block" data-action="reset">${icon('trash')}Borrar todos mis datos</button>
+    </section>
+    <p class="micro center">Mi Proyecto de Vida · v2</p>
   `;
 }
 
@@ -927,7 +1087,7 @@ const ACTIONS = {
     if (i >= 0) list.splice(i, 1); else list.push(el.dataset.id);
     save(); render();
     if (skinDone(today(), el.dataset.slot) === S.skin[el.dataset.slot].length && i < 0) {
-      toast(skinComplete(today()) ? `¡Rutina del día completa! 🔥 Racha: ${skinStreak()}` : '¡Rutina completa! ✨');
+      toast(skinComplete(today()) ? `Rutina del día completa · racha de ${skinStreak()}` : 'Rutina completa');
     }
   },
   'weekly-toggle': el => {
@@ -941,11 +1101,11 @@ const ACTIONS = {
   },
   'skin-edit': () => {
     const lines = arr => esc(arr.map(s => s.text).join('\n'));
-    openModal('Editar rutina de skincare', `
-      <label>☀️ Mañana (un paso por línea)<textarea name="am" rows="4">${lines(S.skin.am)}</textarea></label>
-      <label>🌙 Noche (un paso por línea)<textarea name="pm" rows="4">${lines(S.skin.pm)}</textarea></label>
-      <label>📅 Semanal (formato: tarea | veces por semana)<textarea name="weekly" rows="3">${esc(S.skin.weekly.map(w => `${w.text} | ${w.times}`).join('\n'))}</textarea></label>
-      <p class="muted small">Consejo: si tu piel es grasa o con acné, usa limpiador y productos “no comedogénicos”. Ante dudas, consulta a un dermatólogo.</p>`,
+    openModal('Editar rutina', `
+      <label>Mañana (un paso por línea)<textarea name="am" rows="4">${lines(S.skin.am)}</textarea></label>
+      <label>Noche (un paso por línea)<textarea name="pm" rows="4">${lines(S.skin.pm)}</textarea></label>
+      <label>Semanal (tarea | veces por semana)<textarea name="weekly" rows="3">${esc(S.skin.weekly.map(w => `${w.text} | ${w.times}`).join('\n'))}</textarea></label>
+      <p class="micro">Si tu piel es grasa o con acné, busca productos “no comedogénicos”. Ante dudas, consulta a un dermatólogo.</p>`,
     data => {
       const parse = (text, old) => text.split('\n').map(t => t.trim()).filter(Boolean).map(t => {
         const prev = old.find(o => o.text === t);
@@ -965,13 +1125,13 @@ const ACTIONS = {
     openModal('Recordatorios de skincare', `
       <p class="muted small">Se descargará un archivo para agregar a tu calendario. El calendario te avisará todos los días.</p>
       <div class="grid2">
-        <label>☀️ Mañana<input type="time" name="am" value="07:00" required></label>
-        <label>🌙 Noche<input type="time" name="pm" value="21:30" required></label>
+        <label>Mañana<input type="time" name="am" value="07:00" required></label>
+        <label>Noche<input type="time" name="pm" value="21:30" required></label>
       </div>`,
     data => {
       download('recordatorio-skincare.ics', icsFile([
-        icsEvent({ summary: '☀️ Skincare de la mañana', description: S.skin.am.map(s => s.text).join(' → '), time: data.am, rrule: 'FREQ=DAILY' }),
-        icsEvent({ summary: '🌙 Skincare de la noche', description: S.skin.pm.map(s => s.text).join(' → '), time: data.pm, rrule: 'FREQ=DAILY' }),
+        icsEvent({ summary: 'Skincare de la mañana', description: S.skin.am.map(s => s.text).join(' → '), time: data.am, rrule: 'FREQ=DAILY' }),
+        icsEvent({ summary: 'Skincare de la noche', description: S.skin.pm.map(s => s.text).join(' → '), time: data.pm, rrule: 'FREQ=DAILY' }),
       ]), 'text/calendar');
       toast('Abre el archivo descargado para agregarlo a tu calendario');
     }, 'Descargar');
@@ -979,45 +1139,52 @@ const ACTIONS = {
   'ics-workout': () => {
     const days = [['MO', 'Lun'], ['TU', 'Mar'], ['WE', 'Mié'], ['TH', 'Jue'], ['FR', 'Vie'], ['SA', 'Sáb'], ['SU', 'Dom']];
     openModal('Recordatorio de entreno', `
-      <p class="muted small">Elige tus días (recomendado 3, con un día de descanso entre ellos).</p>
-      <div class="days-pick">${days.map(([c, n]) => `<label class="inline"><input type="checkbox" name="d_${c}" ${['MO', 'WE', 'FR'].includes(c) ? 'checked' : ''}> ${n}</label>`).join('')}</div>
+      <p class="muted small">Elige tus días: lo ideal son 3, con un día de descanso entre ellos.</p>
+      <div class="days-pick">${days.map(([c, n]) => `<label class="chip"><input type="checkbox" name="d_${c}" ${['MO', 'WE', 'FR'].includes(c) ? 'checked' : ''}><span>${n}</span></label>`).join('')}</div>
       <label>Hora<input type="time" name="time" value="19:00" required></label>`,
     data => {
       const sel = days.map(d => d[0]).filter(c => data[`d_${c}`]);
       if (!sel.length) { toast('Elige al menos un día'); return false; }
       download('recordatorio-entreno.ics', icsFile([icsEvent({
-        summary: '💪 Entreno en casa', description: 'Abre Mi Proyecto de Vida y haz tu sesión de hoy (30–40 min).',
+        summary: 'Entreno en casa', description: 'Abre Mi Proyecto de Vida y haz tu sesión de hoy (40–45 min).',
         time: data.time, rrule: `FREQ=WEEKLY;BYDAY=${sel.join(',')}`,
       })]), 'text/calendar');
       toast('Abre el archivo descargado para agregarlo a tu calendario');
     }, 'Descargar');
   },
 
+  'workout-tab': el => { S.ui.workoutTab = el.dataset.tab; save(); render(); },
   'pick-workout': el => { S.ui.workoutPick = el.dataset.day; render(); },
   'ex-toggle': el => {
     const day = el.dataset.day, i = Number(el.dataset.i);
     let cur = S.workout.current;
-    if (!cur || cur.date !== today() || cur.day !== day) cur = S.workout.current = { date: today(), day, done: [] };
-    const j = cur.done.indexOf(i);
-    if (j >= 0) cur.done.splice(j, 1); else cur.done.push(i);
+    if (!cur || cur.date !== today() || !cur.done || Array.isArray(cur.done)) cur = S.workout.current = { date: today(), done: {} };
+    const list = cur.done[day] = cur.done[day] || [];
+    const j = list.indexOf(i);
+    if (j >= 0) list.splice(j, 1); else list.push(i);
     save(); render();
   },
   'finish-workout': el => {
     const day = el.dataset.day;
     const total = WORKOUT_PLAN[day].exercises.length;
-    const cur = S.workout.current;
-    const n = cur && cur.date === today() && cur.day === day ? cur.done.length : 0;
+    const n = checkedToday(day).length;
     const finish = () => {
       S.workout.sessions.push({ date: today(), day, level: S.workout.level });
-      S.workout.current = null;
+      if (S.workout.current && S.workout.current.done) delete S.workout.current.done[day];
       S.ui.workoutPick = null;
       save(); render();
       const left = SESSIONS_TO_LEVEL_UP - sessionsAtLevel();
-      toast(left === 0 && S.workout.level < 3 ? '🎉 ¡Puedes subir de nivel!' : '💪 ¡Sesión registrada! Gran trabajo.');
+      toast(left === 0 && S.workout.level < 3 ? '¡Puedes subir de nivel!' : 'Sesión registrada. Gran trabajo.');
     };
     if (n < total) {
       openModal('¿Terminar la sesión?', `<p>Marcaste ${n} de ${total} ejercicios. ¿Registrarla igual?</p>`, () => { finish(); }, 'Sí, registrar');
     } else finish();
+  },
+  'finish-yoga': () => {
+    if (!yogaToday()) S.workout.yoga.push(today());
+    if (S.workout.current && S.workout.current.done) delete S.workout.current.done.Y;
+    save(); render();
+    toast('Yoga registrado. Buena recuperación.');
   },
   level: el => {
     S.workout.level = Math.max(1, Math.min(3, S.workout.level + Number(el.dataset.dir)));
@@ -1028,7 +1195,7 @@ const ACTIONS = {
   volley: () => {
     const k = today();
     const i = S.workout.volley.indexOf(k);
-    if (i >= 0) S.workout.volley.splice(i, 1); else { S.workout.volley.push(k); toast('🏐 ¡Partido registrado!'); }
+    if (i >= 0) S.workout.volley.splice(i, 1); else { S.workout.volley.push(k); toast('Partido registrado'); }
     save(); render();
   },
 
@@ -1038,7 +1205,7 @@ const ACTIONS = {
       milestones: (data.steps || '').split('\n').map(t => t.trim()).filter(Boolean).map(text => ({ id: uid(), text, done: false })),
       manual: 0, done: false, createdAt: today(),
     });
-    toast('Meta creada 🎯');
+    toast('Meta creada');
   }),
   'goal-edit': el => {
     const g = S.goals.find(x => x.id === el.dataset.goal);
@@ -1051,7 +1218,7 @@ const ACTIONS = {
     g.done = !g.done;
     if (g.done) g.doneAt = today();
     save(); render();
-    if (g.done) toast('🎉 ¡Meta lograda! Felicidades.');
+    if (g.done) toast('¡Meta lograda! Felicidades.');
   },
   'goal-del': el => confirmModal('Se eliminará esta meta y sus pasos.', () => {
     S.goals = S.goals.filter(x => x.id !== el.dataset.goal);
@@ -1061,11 +1228,11 @@ const ACTIONS = {
     const m = g.milestones.find(x => x.id === el.dataset.id);
     m.done = !m.done;
     save(); render();
-    if (g.milestones.every(x => x.done)) toast('¡Todos los pasos listos! Márcala como lograda 🎉');
+    if (g.milestones.every(x => x.done)) toast('Todos los pasos listos: márcala como lograda');
   },
   'ms-add': el => {
     const g = S.goals.find(x => x.id === el.dataset.goal);
-    openModal(`Nuevo paso: ${g.title}`, '<label>Paso<input name="text" required maxlength="120" placeholder="Algo concreto que puedas hacer"></label>', data => {
+    openModal(`Nuevo paso`, `<p class="muted small">${esc(g.title)}</p><label>Paso<input name="text" required maxlength="120" placeholder="Algo concreto que puedas hacer"></label>`, data => {
       g.milestones.push({ id: uid(), text: data.text.trim(), done: false });
     });
   },
@@ -1081,7 +1248,7 @@ const ACTIONS = {
     const type = el.dataset.type;
     const cats = type === 'in' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
     openModal(type === 'in' ? 'Nuevo ingreso' : 'Nuevo gasto', `
-      <label>Monto (${esc(S.settings.currency)})<input type="number" inputmode="decimal" name="amount" min="0.01" step="0.01" required></label>
+      <label>Monto (${esc(S.settings.currency)})<input type="number" inputmode="decimal" name="amount" min="0.01" step="0.01" required class="big-input"></label>
       <label>Categoría<select name="category">${cats.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
       <label>Nota (opcional)<input name="note" maxlength="80" placeholder="${type === 'in' ? 'Ej: sueldo de octubre' : 'Ej: almuerzo'}"></label>
       <label>Fecha<input type="date" name="date" value="${today()}" max="${today()}" required></label>`,
@@ -1104,18 +1271,18 @@ const ACTIONS = {
     const sv = S.savings.find(x => x.id === el.dataset.id);
     const dir = Number(el.dataset.dir);
     openModal(dir > 0 ? `Aportar a ${sv.name}` : `Retirar de ${sv.name}`,
-      '<label>Monto<input type="number" inputmode="decimal" name="amount" min="0.01" step="0.01" required></label>',
+      '<label>Monto<input type="number" inputmode="decimal" name="amount" min="0.01" step="0.01" required class="big-input"></label>',
       data => {
         const a = Number(data.amount) || 0;
         sv.saved = Math.max(0, Math.round((sv.saved + dir * a) * 100) / 100);
-        if (dir > 0 && sv.saved >= sv.target) toast(`🎉 ¡Llegaste a tu meta "${sv.name}"!`);
+        if (dir > 0 && sv.saved >= sv.target) toast(`¡Llegaste a tu meta "${sv.name}"!`);
       });
   },
   'sav-del': el => confirmModal('Se eliminará esta meta de ahorro.', () => { S.savings = S.savings.filter(x => x.id !== el.dataset.id); }),
   'dec-add': () => openModal('Nueva decisión', `
     <label>¿Qué tienes que decidir?<input name="question" required maxlength="100" placeholder="Ej: ¿Qué celular me compro?"></label>
     <label>Opciones (una por línea, 2 a 4)<textarea name="options" rows="3" required placeholder="Opción A&#10;Opción B"></textarea></label>
-    <label>¿Qué te importa? (una por línea, con peso 1–5 después de “|”)<textarea name="criteria" rows="4" required>Precio | 5
+    <label>¿Qué te importa? (criterio | peso 1–5)<textarea name="criteria" rows="4" required>Precio | 5
 Calidad | 4
 Lo uso a diario | 3</textarea></label>`,
   data => {
@@ -1158,7 +1325,7 @@ const CHANGES = {
       if (!data || typeof data !== 'object' || !data.settings) throw new Error('formato');
       S = mergeDefaults(defaultState(), data);
       save(); render();
-      toast('Copia restaurada ✅');
+      toast('Copia restaurada');
     }).catch(() => toast('Ese archivo no es una copia válida'));
   },
 };
@@ -1177,6 +1344,11 @@ document.addEventListener('input', e => {
   if (e.target.closest('[data-calc="buy"]')) buyDraft[e.target.name] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
   if (e.target.closest('[data-calc]')) updateCalcs();
 });
+
+// Barra de pestañas y botón de ajustes con iconos propios.
+$('.tabbar').innerHTML = TABS.map(([v, label, ic]) =>
+  `<button data-action="go" data-view="${v}" aria-label="${label}">${icon(ic)}<span>${label}</span></button>`).join('');
+$('#settings-btn').innerHTML = icon('sliders');
 
 render();
 

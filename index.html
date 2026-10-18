@@ -4,32 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Mi Proyecto de Vida</title>
-  <meta name="description" content="Metas, finanzas, ejercicio en casa y rutina de skincare en un solo lugar.">
-  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="Metas, finanzas, entreno en casa para vóley y rutina de skincare en un solo lugar.">
+  <meta name="theme-color" content="#F4F2ED" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0E0E0D" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Mi Vida">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="topbar">
-    <h1 id="view-title">Hoy</h1>
-    <button class="icon-btn" data-action="go" data-view="ajustes" aria-label="Ajustes">⚙️</button>
+    <a class="wordmark" href="#hoy" aria-label="Inicio">mi<span>·</span>vida</a>
+    <button class="icon-btn boxed" id="settings-btn" data-action="go" data-view="ajustes" aria-label="Ajustes"></button>
   </header>
 
   <main id="app" tabindex="-1"></main>
 
-  <nav class="tabbar" aria-label="Secciones">
-    <button data-action="go" data-view="hoy"><span>🏠</span>Hoy</button>
-    <button data-action="go" data-view="metas"><span>🎯</span>Metas</button>
-    <button data-action="go" data-view="finanzas"><span>💰</span>Finanzas</button>
-    <button data-action="go" data-view="ejercicio"><span>💪</span>Ejercicio</button>
-    <button data-action="go" data-view="piel"><span>🧴</span>Skincare</button>
-  </nav>
+  <nav class="tabbar" aria-label="Secciones"></nav>
 
   <dialog id="modal">
     <form method="dialog" id="modal-form"></form>

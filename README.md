@@ -5,7 +5,7 @@ App para el celular (PWA) con todo tu proyecto de vida en un solo lugar:
 - **Hoy**: resumen del día con tu skincare, tu entreno, tus metas y tu dinero del mes.
 - **Metas y proyectos**: metas por área (personal, salud, finanzas, estudios, relaciones, proyectos), divididas en pasos con barra de avance y fecha límite.
 - **Finanzas**: ingresos y gastos por categoría, tasa de ahorro, metas de ahorro, calculadoras de interés compuesto y de préstamos, y ayuda para decidir (“¿Me lo compro?” y una tabla para comparar opciones).
-- **Ejercicio en casa**: plan de cuerpo completo sin equipo pensado para vóley (piernas y salto, brazos y hombros, core y agilidad), en 3 niveles, con registro de sesiones y partidos.
+- **Entreno en casa**: plan de 12 semanas sin equipo pensado para vóley, basado en guías de la OMS y el ACSM y en revisiones científicas: A (potencia y piernas), B (tren superior y hombros), C (core, agilidad y resistencia) y una sesión opcional de yoga. Incluye una guía científica con fuentes ([docs/guia-entrenamiento.md](docs/guia-entrenamiento.md)).
 - **Skincare**: rutina de mañana, noche y semanal con check diario, racha y calendario de 4 semanas.
 - **Recordatorios**: descarga un archivo de calendario (.ics) para que tu celular te avise del skincare y del entreno.
 
