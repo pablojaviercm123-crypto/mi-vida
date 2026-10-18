@@ -297,18 +297,47 @@ const NUTRITION_GOALS = [
   { id: 'grasa', name: 'Bajar grasa', kcal: -0.15, protein: 2.0, note: 'Déficit moderado (~15 %) para perder grasa sin perder músculo ni energía para jugar.' },
   { id: 'musculo', name: 'Ganar músculo', kcal: 0.10, protein: 1.8, note: 'Superávit pequeño (~10 %) para construir músculo con poca grasa extra.' },
   { id: 'rendir', name: 'Mantenerme y rendir', kcal: 0, protein: 1.6, note: 'Calorías de mantenimiento con proteína suficiente para recuperarte.' },
+  { id: 'recomp', name: 'Rendir y definir', kcal: 0, protein: 2.0, note: 'Calorías de mantenimiento, proteína alta y entreno de fuerza: ganas músculo y pierdes grasa poco a poco sin bajar tu rendimiento.' },
 ];
+
+// Datos del brief de Pablo (18 oct 2026). Se cargan la primera vez; se pueden cambiar en "Mis datos".
+const NUTRITION_PRESET = { weight: 49, height: 157, age: 19, sex: 'm', goal: 'recomp', activity: 'media', meals: 4, avoid: 'papaya' };
+const NUTRITION_VERSION = 1;
 // Reparto del día según número de comidas.
 const MEAL_SPLITS = {
   3: [['Desayuno', 0.30], ['Almuerzo', 0.40], ['Cena', 0.30]],
-  4: [['Desayuno', 0.25], ['Almuerzo', 0.35], ['Merienda', 0.15], ['Cena', 0.25]],
+  4: [['Desayuno', 0.25], ['Almuerzo', 0.35], ['Snack para la U', 0.15], ['Cena', 0.25]],
   5: [['Desayuno', 0.22], ['Media mañana', 0.10], ['Almuerzo', 0.33], ['Merienda', 0.13], ['Cena', 0.22]],
 };
-// Ideas con comida fácil de conseguir en Bolivia.
+// Ideas con comida fácil de conseguir en Santa Cruz, a partir de lo que ya comes.
 const MEAL_IDEAS = {
-  'Desayuno': ['Huevos revueltos + marraqueta o pan integral + papaya', 'Avena cocida con leche, plátano y maní', 'Api o yogur + pan con queso + fruta'],
+  'Desayuno': [
+    '3 huevos + 1 marraqueta o 2 rebanadas de pan integral + kiwi o piña',
+    'Avena cocida con leche + 2 huevos + arándanos',
+    'Tostadas con palta + huevos revueltos + manzana verde',
+  ],
   'Media mañana': ['Yogur natural + fruta', 'Puñado de maní + mandarina'],
-  'Almuerzo': ['Pollo a la plancha + arroz + ensalada', 'Majadito o carne magra + papa + verduras', 'Lentejas con arroz + ensalada + huevo'],
+  'Almuerzo': [
+    'Pechuga de pollo + papa hervida y arroz + tomate, lechuga y pepino con aceite de oliva',
+    'Carne magra + yuca o arroz + verduras salteadas',
+    'Majadito de pollo con huevo + ensalada',
+  ],
+  'Snack para la U': [
+    'Sándwich de pollo o huevo en pan integral + una fruta (lo llevas en la mochila)',
+    'Yogur bebible + plátano + puñado de maní',
+    'Tupper pequeño de arroz con pollo',
+  ],
   'Merienda': ['Yogur + avena o granola', 'Sándwich de pollo o atún', 'Plátano + leche o licuado de frutas con leche'],
-  'Cena': ['Pescado o pollo + quinua + verduras', 'Tortilla de huevo con verduras + yuca o camote', 'Sopa de quinua con carne + ensalada'],
+  'Cena': [
+    'Pechuga o carne + arroz o papa + tomate y pepino',
+    'Tortilla de 2–3 huevos con verduras + yuca',
+    'Sopa de quinua o fideo con carne + ensalada',
+  ],
 };
+
+const FACE_FAT_NOTES = [
+  'No se puede quemar grasa de una sola zona: la cara se afina cuando baja tu grasa total, y eso depende de la genética y la edad.',
+  'A los 19 años la cara todavía cambia y se define con los años.',
+  'La hinchazón de la cara baja si duermes 7–9 horas, comes menos ultraprocesados y sal, y tomas suficiente agua.',
+  'La creatina a 5 g al día es segura y retiene agua dentro del músculo, no en la cara.',
+];

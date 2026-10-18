@@ -20,7 +20,7 @@ function defaultState() {
       weeklyLog: [],
     },
     skinV: 0, // 0 = aún sin la rutina base actual
-    nutrition: { profile: null },
+    nutrition: { profile: null, v: 0 },
     ui: { finTab: 'resumen', finMonth: null, workoutPick: null, workoutTab: 'plan' },
   };
 }
@@ -50,6 +50,12 @@ function mergeDefaults(def, data) {
 
 let S = loadState();
 S.ui.workoutPick = null; // cada vez que abres la app, muestra la sesión que te toca
+// Carga los datos del brief de alimentación una sola vez (si aún no hay perfil propio).
+if ((S.nutrition.v || 0) < NUTRITION_VERSION) {
+  if (!S.nutrition.profile) S.nutrition.profile = { ...NUTRITION_PRESET };
+  S.nutrition.v = NUTRITION_VERSION;
+  save();
+}
 // Rutina base de skincare actualizada (los productos reales de Pablo).
 if ((S.skinV || 1) < SKINCARE_VERSION) {
   S.skin.am = DEFAULT_SKINCARE.am.map(s => ({ ...s }));
@@ -933,7 +939,7 @@ function nutritionView() {
   const fmt = v => String(v).replace('.', ',');
   return `
     <section class="card dark">
-      <p class="eyebrow">${esc(n.goal.name)} · ${p.weight} kg · ${p.height} cm</p>
+      <p class="eyebrow">${esc(n.goal.name)} · ${String(p.weight).replace('.', ',')} kg · ${p.height} cm · ${p.age} años</p>
       <p class="display-num">${n.kcal.toLocaleString('es-BO')}<small>kcal al día</small></p>
       <div class="macro-bar"><i class="p" style="flex:${kP}"></i><i class="c" style="flex:${kC}"></i><i class="f" style="flex:${kF}"></i></div>
       <div class="figures on-dark">
@@ -950,6 +956,7 @@ function nutritionView() {
       <div><span>IMC</span><b>${fmt(n.bmi.toFixed(1))}</b></div>
     </div>
     <p class="note">Suma 0,5–0,75 L de agua por cada hora de entreno o vóley. El IMC es solo una referencia: no distingue músculo de grasa.</p>
+    ${p.goal === 'grasa' && n.bmi < 21 ? `<p class="note warn-note">Tu IMC ya es bajo. Para definir sin perder rendimiento ni músculo conviene más <b>Rendir y definir</b> que un déficit de calorías.</p>` : ''}
 
     <p class="section-label">Tu día, comida por comida</p>
     <p class="micro hand-legend">Porciones con tu mano: <b>palma</b> = proteína · <b>puñado</b> = carbohidrato · <b>pulgar</b> = grasa · más 1–2 puños de verduras.</p>
@@ -966,6 +973,9 @@ function nutritionView() {
       </section>`;
     }).join('')}
     ${p.avoid ? `<p class="note">Evita: <b>${esc(p.avoid)}</b>. Cambia esos alimentos por otros del mismo grupo.</p>` : ''}
+
+    ${['grasa', 'recomp'].includes(p.goal) ? `<p class="section-label">Sobre la grasa de la cara</p>
+    <section class="card"><ul class="dash">${FACE_FAT_NOTES.map(t => `<li>${esc(t)}</li>`).join('')}</ul></section>` : ''}
 
     <p class="section-label">Alrededor del vóley y el entreno</p>
     <section class="card"><ul class="dash">

@@ -611,6 +611,7 @@ dialog.timer::backdrop { background: var(--dark); }
 .portions span { background: var(--sunken); border-radius: 10px; padding: 6px 10px; font-size: .82rem; color: var(--ink-2); }
 .portions b { font: 800 1rem var(--font-display); color: var(--ink); margin-right: 2px; }
 .meal .dash { margin-bottom: 0; }
+.warn-note { background: color-mix(in srgb, var(--warn) 14%, var(--surface)); color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
