@@ -13,7 +13,14 @@ const EXPENSE_CATEGORIES = [
   'Comida', 'Transporte', 'Vivienda', 'Servicios', 'Salud', 'Cuidado personal',
   'Ropa', 'Ocio', 'Educación', 'Deudas', 'Ahorro / Inversión', 'Otros',
 ];
-const INCOME_CATEGORIES = ['Sueldo', 'Extra', 'Negocio', 'Regalo', 'Intereses', 'Otros'];
+const INCOME_CATEGORIES = ['Sueldo', 'Extra', 'Negocio', 'Regalo', 'Intereses', 'Pago pendiente', 'Otros'];
+
+// Ingresos fijos del brief (oct. 2026): sueldo y lo que le deben de un trabajo anterior.
+const FIXED_INCOME_PRESET = [
+  { name: 'Sueldo', amount: 2000, category: 'Sueldo', total: null, received: 0 },
+  { name: 'Pago del trabajo anterior', amount: 250, category: 'Pago pendiente', total: 1750, received: 500 },
+];
+const FINANCE_VERSION = 1;
 
 /* ---------- Plan de entrenamiento ----------
    Basado en la guía (ver GUIDE): fuerza 2–3 días/semana de cuerpo completo (ACSM, OMS),

@@ -21,6 +21,8 @@ function defaultState() {
     },
     skinV: 0, // 0 = aún sin la rutina base actual
     nutrition: { profile: null, v: 0 },
+    fixedIncome: [],
+    financeV: 0,
     ui: { finTab: 'resumen', finMonth: null, workoutPick: null, workoutTab: 'plan' },
   };
 }
@@ -54,6 +56,12 @@ S.ui.workoutPick = null; // cada vez que abres la app, muestra la sesión que te
 if ((S.nutrition.v || 0) < NUTRITION_VERSION) {
   if (!S.nutrition.profile) S.nutrition.profile = { ...NUTRITION_PRESET };
   S.nutrition.v = NUTRITION_VERSION;
+  save();
+}
+// Ingresos fijos del brief (sueldo y pago pendiente de un trabajo anterior).
+if ((S.financeV || 0) < FINANCE_VERSION) {
+  if (!S.fixedIncome.length) S.fixedIncome = FIXED_INCOME_PRESET.map((f, i) => ({ ...f, id: 'fx' + i }));
+  S.financeV = FINANCE_VERSION;
   save();
 }
 // Rutina base de skincare actualizada (los productos reales de Pablo).
@@ -637,6 +645,57 @@ function finMonthNav() {
     </div>`;
 }
 
+// ¿Ya registraste este ingreso fijo en el mes mk?
+function fixedPaid(f, mk) {
+  return S.tx.some(t => t.fixedId === f.id && t.date.startsWith(mk));
+}
+function fixedLeft(f) {
+  return f.total ? Math.max(0, f.total - (f.received || 0)) : null;
+}
+function fixedActive() {
+  return S.fixedIncome.filter(f => fixedLeft(f) !== 0);
+}
+
+function fixedIncomeCard(mk) {
+  if (!S.fixedIncome.length) return `<section class="card"><p class="muted">Agrega tu sueldo o pagos que recibes cada mes para registrarlos con un toque.</p></section>`;
+  return S.fixedIncome.map(f => {
+    const left = fixedLeft(f);
+    const paid = fixedPaid(f, mk);
+    const done = left === 0;
+    const p = f.total ? (f.received || 0) / f.total * 100 : 0;
+    const cuotas = left ? Math.ceil(left / f.amount) : 0;
+    return `<section class="card fixed ${done ? 'is-done' : ''}">
+      <div class="card-head"><div class="title-ic">${icon(f.total ? 'calendar' : 'wallet')}</div>
+        <div class="grow"><h3>${esc(f.name)}</h3>
+          <p class="muted small">${money(f.amount)} al mes${f.total ? ` · ${money(f.received || 0)} de ${money(f.total)}` : ''}</p></div>
+        ${f.total ? `<span class="big-num">${Math.round(p)}<small>%</small></span>` : ''}</div>
+      ${f.total ? progressBar(p, done ? 'lime' : '') + `<p class="micro">${done ? 'Ya cobraste todo.' : `Faltan ${money(left)}: ${cuotas} ${cuotas === 1 ? 'cuota' : 'cuotas'} más.`}</p>` : ''}
+      <div class="actions">
+        ${done ? '' : paid
+          ? `<span class="paid-tag">${icon('check')}Cobrado este mes</span>`
+          : `<button class="btn small primary" data-action="fixed-pay" data-id="${f.id}">${icon('plus')}Registrar cobro</button>`}
+        <span class="grow"></span>
+        <button class="icon-btn" data-action="fixed-edit" data-id="${f.id}" aria-label="Editar">${icon('edit')}</button>
+      </div></section>`;
+  }).join('');
+}
+
+// Reparto sugerido: vive con su familia y no paga casa, así que el ahorro puede ser alto.
+function splitCard() {
+  const base = fixedActive().reduce((a, f) => a + f.amount, 0);
+  if (!base) return `<section class="card quote"><p class="eyebrow">Regla 50/30/20</p><p>50 % necesidades, 30 % gustos y 20 % ahorro e inversión. Es una guía: ajústala a tu realidad.</p></section>`;
+  const parts = [
+    { name: 'Ahorro', share: 0.40, note: 'Apenas cobras. Primero un fondo de emergencia, luego a generar intereses.', cls: 'lime' },
+    { name: 'Necesidades', share: 0.30, note: 'Transporte, la U, celular, comida fuera.', cls: '' },
+    { name: 'Gustos', share: 0.30, note: 'Salidas, ropa, vóley. Sin culpa, pero con tope.', cls: 'coral' },
+  ];
+  return `<section class="card">
+    <p class="eyebrow">Tu reparto sugerido · ${money(base)} al mes</p>
+    ${parts.map(x => `<div class="cat-row"><div class="row"><span>${x.name} <span class="muted">${pct(x.share * 100)}</span></span><b>${money(Math.round(base * x.share))}</b></div>${progressBar(x.share * 100, x.cls)}<p class="micro">${x.note}</p></div>`).join('')}
+    <p class="muted small">Como vives con tu familia y no pagas casa, puedes ahorrar más que el 20 % típico. Cuando termine el pago pendiente, el reparto se recalcula solo.</p>
+  </section>`;
+}
+
 function finResumen() {
   const mk = S.ui.finMonth || monthKey();
   const s = monthSummary(mk);
@@ -674,6 +733,9 @@ function finResumen() {
       ${cats.map(([c, v]) => `<div class="cat-row"><div class="row"><span>${esc(c)}</span><span>${money(v)} <span class="muted">${pct(v / s.expense * 100)}</span></span></div>${progressBar(v / max * 100, 'coral')}</div>`).join('')}
     </section>` : ''}
 
+    <p class="section-label">Ingresos fijos <button class="link-btn" data-action="fixed-edit">${icon('plus')}Nuevo</button></p>
+    ${fixedIncomeCard(mk)}
+
     <p class="section-label">Metas de ahorro <button class="link-btn" data-action="sav-add">${icon('plus')}Nueva</button></p>
     ${S.savings.length ? S.savings.map(sv => {
       const p = sv.target ? sv.saved / sv.target * 100 : 0;
@@ -690,7 +752,7 @@ function finResumen() {
         </div></section>`;
     }).join('') : '<section class="card"><p class="muted">Ej: fondo de emergencia (3 meses de gastos), un viaje, una laptop.</p></section>'}
 
-    <section class="card quote"><p class="eyebrow">Regla 50/30/20</p><p>50 % necesidades, 30 % gustos y 20 % ahorro e inversión. Es una guía: ajústala a tu realidad.</p></section>
+    ${splitCard()}
   `;
 }
 
@@ -1578,6 +1640,41 @@ const ACTIONS = {
     });
   },
   'tx-del': el => confirmModal('Se eliminará este movimiento.', () => { S.tx = S.tx.filter(t => t.id !== el.dataset.id); }),
+  'fixed-pay': el => {
+    const f = S.fixedIncome.find(x => x.id === el.dataset.id);
+    if (!f) return;
+    const left = fixedLeft(f);
+    const amount = left === null ? f.amount : Math.min(f.amount, left);
+    const mk = S.ui.finMonth || monthKey();
+    const date = mk === monthKey() ? today() : `${mk}-01`;
+    S.tx.push({ id: uid(), type: 'in', amount, category: f.category, note: f.name, date, fixedId: f.id });
+    if (f.total) f.received = (f.received || 0) + amount;
+    save(); render();
+    toast(`Cobro de ${money(amount)} guardado`);
+  },
+  'fixed-edit': el => {
+    const f = el.dataset.id ? S.fixedIncome.find(x => x.id === el.dataset.id) : null;
+    openModal(f ? 'Editar ingreso fijo' : 'Nuevo ingreso fijo', `
+      <label>Nombre<input name="name" maxlength="40" required value="${esc(f?.name || '')}" placeholder="Ej: Sueldo"></label>
+      <label>Monto al mes (${esc(S.settings.currency)})<input type="number" inputmode="decimal" name="amount" min="0.01" step="0.01" required value="${f?.amount ?? ''}"></label>
+      <label>Categoría<select name="category">${INCOME_CATEGORIES.map(c => `<option ${f?.category === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></label>
+      <label>Total a cobrar (solo si termina)<input type="number" inputmode="decimal" name="total" min="0" step="0.01" value="${f?.total ?? ''}" placeholder="Vacío si es indefinido"></label>
+      <label>Ya cobrado<input type="number" inputmode="decimal" name="received" min="0" step="0.01" value="${f?.received ?? 0}"></label>
+      ${f ? `<button type="button" class="btn danger small" data-action="fixed-del" data-id="${f.id}">${icon('trash')}Eliminar</button>` : ''}`,
+    data => {
+      const amount = Math.round(parseFloat(data.amount) * 100) / 100;
+      if (!(amount > 0)) { toast('Pon un monto válido'); return false; }
+      const total = parseFloat(data.total) > 0 ? parseFloat(data.total) : null;
+      const item = { name: data.name.trim(), amount, category: data.category, total, received: total ? (parseFloat(data.received) || 0) : 0 };
+      if (f) Object.assign(f, item); else S.fixedIncome.push({ id: uid(), ...item });
+      toast('Ingreso fijo guardado');
+    });
+  },
+  'fixed-del': el => {
+    S.fixedIncome = S.fixedIncome.filter(x => x.id !== el.dataset.id);
+    closeModal(); save(); render();
+    toast('Ingreso fijo eliminado');
+  },
   'sav-add': () => openModal('Nueva meta de ahorro', `
     <label>Nombre<input name="name" required maxlength="60" placeholder="Ej: Fondo de emergencia"></label>
     <label>Monto objetivo<input type="number" inputmode="decimal" name="target" min="1" step="0.01" required></label>
