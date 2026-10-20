@@ -18,6 +18,7 @@ function defaultState() {
       weekly: DEFAULT_SKINCARE.weekly.map(s => ({ ...s })),
       log: {},
       weeklyLog: [],
+      sun: {},
     },
     skinV: 0, // 0 = aún sin la rutina base actual
     nutrition: { profile: null, v: 0 },
@@ -345,12 +346,70 @@ function skinRatio(key) {
   const total = S.skin.am.length + S.skin.pm.length;
   return total ? (skinDone(key, 'am') + skinDone(key, 'pm')) / total : 0;
 }
+// Un día suma a la racha si completaste al menos una rutina (mañana o noche).
+function skinActive(key) {
+  return ['am', 'pm'].some(slot => S.skin[slot].length && skinDone(key, slot) === S.skin[slot].length);
+}
 function skinStreak() {
   let key = today();
-  if (!skinComplete(key)) key = addDays(key, -1); // el día de hoy aún no termina
+  if (!skinActive(key)) key = addDays(key, -1); // el día de hoy aún no termina
   let n = 0;
-  while (skinComplete(key)) { n++; key = addDays(key, -1); }
+  while (skinActive(key)) { n++; key = addDays(key, -1); }
   return n;
+}
+// Aplicaciones = rutinas completas + reaplicaciones de protector, desde el lunes.
+function skinApplications(from = weekStart()) {
+  let n = 0;
+  for (let k = from; k <= today(); k = addDays(k, 1)) {
+    ['am', 'pm'].forEach(slot => { if (S.skin[slot].length && skinDone(k, slot) === S.skin[slot].length) n++; });
+    n += Math.max(0, (S.skin.sun[k] || []).length - 1);
+  }
+  return n;
+}
+
+/* Protector solar: cada aplicación guarda la hora. */
+function sunToday() {
+  return S.skin.sun[today()] || [];
+}
+function sunState() {
+  const list = sunToday();
+  if (!list.length) return { n: 0 };
+  const last = list[list.length - 1];
+  const next = last.t + SUN_REAPPLY_MIN * 60000;
+  const dayOver = new Date().getHours() >= SUN_DAY_END;
+  return { n: list.length, last, next, due: !dayOver && Date.now() >= next, dayOver };
+}
+function sunLog(product) {
+  const k = today();
+  S.skin.sun[k] = [...(S.skin.sun[k] || []), { t: Date.now(), p: product }];
+  // Mantener ~3 meses
+  const cutoff = addDays(k, -90);
+  Object.keys(S.skin.sun).forEach(d => { if (d < cutoff) delete S.skin.sun[d]; });
+}
+function clock(t) {
+  return new Date(t).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
+}
+function sunCard() {
+  const s = sunState();
+  const left = s.n ? Math.max(0, Math.round((s.next - Date.now()) / 60000)) : 0;
+  const status = !s.n ? 'Aún no te pusiste protector hoy.'
+    : s.dayOver ? 'Ya bajó el sol: no hace falta reaplicar.'
+    : s.due ? 'Te toca reaplicar ahora.'
+    : new Date(s.next).getHours() >= SUN_DAY_END ? 'Estás cubierto hasta que baje el sol.'
+    : `Próxima a las ${clock(s.next)} · faltan ${left >= 60 ? `${Math.floor(left / 60)} h ${left % 60} min` : `${left} min`}.`;
+  const p = s.n && !s.dayOver ? Math.min(100, (1 - left / SUN_REAPPLY_MIN) * 100) : 0;
+  return `<section class="card sun-card ${s.due ? 'is-due' : ''}">
+    <div class="card-head">
+      <div class="title-ic am">${icon('sun')}</div>
+      <div class="grow"><p class="eyebrow">Protector solar · cada 2 h</p><h3>${s.n ? `${s.n} ${s.n === 1 ? 'aplicación' : 'aplicaciones'} hoy` : 'Protector'}</h3></div>
+      ${s.n ? `<span class="pill ${s.due ? 'coral' : 'lime'}">${clock(s.last.t)}</span>` : ''}
+    </div>
+    <p class="${s.due ? 'due-text' : 'muted small'}" data-sun-status>${status}</p>
+    ${s.n && !s.dayOver ? progressBar(p, s.due ? 'coral' : '') : ''}
+    <div class="sun-btns">${SUN_PRODUCTS.map(id => `<button class="btn small" data-action="sun-apply" data-product="${id}">${productArt(id)}${s.n ? 'Reapliqué' : 'Me puse'} ${esc(PRODUCTS[id].brand)}</button>`).join('')}</div>
+    ${s.n > 1 ? `<p class="micro">${sunToday().map(x => `${clock(x.t)} ${esc(PRODUCTS[x.p]?.brand || '')}`).join(' · ')}</p>` : ''}
+    ${s.n ? `<button class="link-btn" data-action="sun-undo">${icon('x')}Deshacer la última</button>` : ''}
+  </section>`;
 }
 function weekStart(key = today()) {
   const d = parseKey(key);
@@ -523,7 +582,7 @@ function viewHoy() {
     </section>
 
     <p class="section-label">Ahora</p>
-    ${hour < 15 ? skinCard('am') + skinCard('pm') : skinCard('pm') + skinCard('am')}
+    ${hour < 15 ? skinCard('am') + (sunToday().length ? sunCard() : '') + skinCard('pm') : (hour < SUN_DAY_END && sunToday().length ? sunCard() : '') + skinCard('pm') + skinCard('am')}
 
     <a class="card session-card ${wDone ? 'is-done' : ''}" href="#ejercicio">
       <div class="session-letter">${wDone ? icon('check') : wDay}</div>
@@ -1200,12 +1259,14 @@ function viewPiel() {
     ${pageHead('Skincare', 'Tu rutina', `<button class="icon-btn boxed" data-action="skin-edit" aria-label="Editar rutina">${icon('edit')}</button>`)}
 
     <section class="card dark stat-strip">
-      <div><span>Racha</span><b>${streak}<small> ${streak === 1 ? 'día' : 'días'}</small></b></div>
-      <div><span>Completos</span><b>${full}<small>/28</small></b></div>
+      <div><span>Racha</span><b>${icon('flame')}${streak}<small> ${streak === 1 ? 'día' : 'días'}</small></b></div>
+      <div><span>Esta semana</span><b>${skinApplications()}<small> apl.</small></b></div>
       <div><span>Hoy</span><b>${Math.round(skinRatio(key) * 100)}<small>%</small></b></div>
     </section>
+    <p class="micro streak-note">La racha suma cada día que completas tu rutina de mañana o de noche. Las aplicaciones cuentan rutinas completas y reaplicaciones de protector.</p>
 
     ${skinCard('am', true)}
+    ${sunCard()}
     ${skinCard('pm', true)}
 
     <p class="section-label">Mis productos</p>
@@ -1464,10 +1525,24 @@ const ACTIONS = {
     const list = day[el.dataset.slot];
     const i = list.indexOf(el.dataset.id);
     if (i >= 0) list.splice(i, 1); else list.push(el.dataset.id);
+    // Marcar el protector de la mañana inicia la cuenta para reaplicar.
+    const step = S.skin[el.dataset.slot].find(s => s.id === el.dataset.id);
+    if (i < 0 && step && SUN_PRODUCTS.includes(step.product) && !sunToday().length) sunLog(step.product);
     save(); render();
     if (skinDone(today(), el.dataset.slot) === S.skin[el.dataset.slot].length && i < 0) {
       toast(skinComplete(today()) ? `Rutina del día completa · racha de ${skinStreak()}` : 'Rutina completa');
     }
+  },
+  'sun-apply': el => {
+    sunLog(el.dataset.product);
+    save(); render();
+    const s = sunState();
+    toast(s.n === 1 ? `Protector puesto · reaplica a las ${clock(s.next)}` : `Reaplicación ${s.n - 1} · la próxima a las ${clock(s.next)}`);
+  },
+  'sun-undo': () => {
+    const k = today();
+    (S.skin.sun[k] || []).pop();
+    save(); render();
   },
   'weekly-toggle': el => {
     const k = today();
@@ -1773,6 +1848,11 @@ $('.tabbar').innerHTML = TABS.map(([v, label, ic]) =>
 $('#settings-btn').innerHTML = icon('sliders');
 
 render();
+
+// Actualiza la cuenta del protector cada minuto (sin tocar formularios abiertos).
+setInterval(() => {
+  if (document.querySelector('[data-sun-status]') && !$('#modal').open && !$('#timer').open) render();
+}, 60000);
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW', err));

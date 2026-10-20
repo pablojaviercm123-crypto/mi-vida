@@ -271,8 +271,7 @@ const DEFAULT_SKINCARE = {
     { id: 'am-cerave', product: 'cerave', text: 'CeraVe Gel Limpiador Espumoso', note: 'Una pequeña cantidad sobre la cara húmeda, masajea 30–60 s y enjuaga con agua tibia.' },
     { id: 'am-byphasse', product: 'byphasse', text: 'Byphasse Tónico Sensi Fresh con aloe vera', note: 'Con un algodón o con las manos, sin frotar. Deja que se absorba.' },
     { id: 'am-purito', product: 'purito', text: 'Purito B5 Panthenol Re-barrier Cream', note: 'Una capa fina en cara y cuello. Espera 1–2 min antes del protector.' },
-    { id: 'am-skin1004', product: 'skin1004', text: 'SKIN1004 Hyalu-Cica Water-Fit Sun Serum', note: 'Tu protector principal. Último paso: dos dedos para cara y cuello, 15 min antes de salir.' },
-    { id: 'am-neutrogena', product: 'neutrogena', text: 'Retoque con Neutrogena Oil Control', note: 'Al mediodía o antes de jugar: reaplica encima. Su toque seco controla el brillo.' },
+    { id: 'am-skin1004', product: 'skin1004', text: 'SKIN1004 Hyalu-Cica Water-Fit Sun Serum', note: 'Tu protector principal. Último paso: dos dedos para cara y cuello, 15 min antes de salir. Al marcarlo empieza la cuenta para reaplicar.' },
   ],
   pm: [
     { id: 'pm-cerave', product: 'cerave', text: 'CeraVe Gel Limpiador Espumoso', note: 'Limpia bien para quitar el protector y el sudor del día. Si jugaste, lávate apenas termines.' },
@@ -284,7 +283,12 @@ const DEFAULT_SKINCARE = {
     { id: 'wk3', text: 'Cambiar funda de almohada', times: 1 },
   ],
 };
-const SKINCARE_VERSION = 3; // sube al cambiar la rutina base para actualizarla en el celular
+const SKINCARE_VERSION = 4; // sube al cambiar la rutina base para actualizarla en el celular
+
+// Ambos protectores indican reaplicar al menos cada 2 h (y después de sudar o secarte con toalla).
+const SUN_REAPPLY_MIN = 120;
+const SUN_PRODUCTS = ['skin1004', 'neutrogena'];
+const SUN_DAY_END = 18; // después de esta hora ya no hace falta reaplicar
 
 const SKINCARE_TIPS = [
   'El protector solar es el paso más importante, incluso si está nublado o te quedas en casa.',
