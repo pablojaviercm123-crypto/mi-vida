@@ -469,10 +469,10 @@ input.big-input { font: 700 1.6rem var(--font-display); letter-spacing: -0.02em;
 .dots i { width: 18px; height: 6px; border-radius: 99px; background: var(--sunken); }
 .dots i.on { background: var(--r2); }
 .dots span { margin-left: 4px; }
-.cal-head, .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-head, .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
 .cal-head span { text-align: center; font-size: .68rem; font-weight: 600; color: var(--ink-3); margin-bottom: 4px; }
 .cell {
-  aspect-ratio: 1; border-radius: 10px; background: var(--sunken); display: grid; place-items: center;
+  aspect-ratio: 1; min-width: 0; border-radius: 10px; background: var(--sunken); display: grid; place-items: center;
   font: 600 .7rem var(--font); color: var(--ink-3); font-variant-numeric: tabular-nums;
 }
 .cell.empty { background: none; }

@@ -68,6 +68,7 @@ if ((S.financeV || 0) < FINANCE_VERSION) {
 if ((S.skinV || 1) < SKINCARE_VERSION) {
   S.skin.am = DEFAULT_SKINCARE.am.map(s => ({ ...s }));
   S.skin.pm = DEFAULT_SKINCARE.pm.map(s => ({ ...s }));
+  S.skin.weekly = DEFAULT_SKINCARE.weekly.map(s => ({ ...s }));
   S.skinV = SKINCARE_VERSION;
   save();
 }
@@ -143,6 +144,12 @@ const PRODUCT_ART = {
     <rect x="16" y="13" width="8" height="1.6" rx=".8" fill="#FFFFFF"/><rect x="15.5" y="29" width="9" height="8" rx="2" fill="#6E7B5B"/>`,
   neutrogena: `<rect x="14" y="3" width="12" height="7" rx="2.5" fill="#F26A21"/><path d="M13 12a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v22a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4z" fill="#FFFFFF" stroke="#D9D6CE"/>
     <rect x="13" y="17" width="14" height="4" fill="#F26A21"/><rect x="16" y="25" width="8" height="1.6" rx=".8" fill="#2B4C8C"/><rect x="16" y="28.5" width="5" height="1.6" rx=".8" fill="#9A988F"/>`,
+  tocobo: `<rect x="15" y="3" width="10" height="7" rx="2" fill="#FFFFFF" stroke="#D9D6CE"/><path d="M13 12a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v23a3 3 0 0 1-3 3h-8a3 3 0 0 1-3-3z" fill="#FFF3B0" stroke="#E8D67A"/>
+    <path d="M13.6 22h12.8v13a2.4 2.4 0 0 1-2.4 2.4h-8a2.4 2.4 0 0 1-2.4-2.4z" fill="#FBE36B" opacity=".8"/><circle cx="20" cy="16.5" r="3.4" fill="#F4C21B"/><path d="M20 13.1v6.8M16.6 16.5h6.8" stroke="#FFF3B0" stroke-width=".9"/>
+    <rect x="16" y="27" width="8" height="1.6" rx=".8" fill="#3A3A38" opacity=".7"/>`,
+  skin1004: `<rect x="15.5" y="3" width="9" height="8" rx="2" fill="#5A9BD8"/><path d="M13 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v21a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4z" fill="#EAF4FC" stroke="#C9DDEE"/>
+    <rect x="13" y="16" width="14" height="2" fill="#5A9BD8"/><rect x="16" y="22" width="8" height="1.6" rx=".8" fill="#2E5C8A"/><rect x="16" y="25.5" width="6" height="1.6" rx=".8" fill="#7FB2E0"/>
+    <path d="M20 29.5c1.9.8 2.2 3 0 4.8-2.2-1.8-1.9-4 0-4.8z" fill="#6BBF8E"/>`,
 };
 
 function productArt(id, cls = '') {

@@ -262,6 +262,8 @@ const PRODUCTS = {
   byphasse: { brand: 'Byphasse', name: 'Tónico Sensi Fresh con aloe vera', detail: 'Piel sensible · calma e hidrata' },
   purito: { brand: 'Purito', name: 'B5 Panthenol Re-barrier Cream', detail: 'Pantenol y centella · repara la barrera' },
   neutrogena: { brand: 'Neutrogena', name: 'Sun Fresh Derm Care Oil Control', detail: 'Protector solar facial · toque seco' },
+  tocobo: { brand: 'TOCOBO', name: 'AHA BHA Lemon Toner', detail: 'Tónico exfoliante suave · poros y textura' },
+  skin1004: { brand: 'SKIN1004', name: 'Hyalu-Cica Water-Fit Sun Serum', detail: 'SPF 50+ PA++++ · centella y ácido hialurónico' },
 };
 
 const DEFAULT_SKINCARE = {
@@ -269,25 +271,26 @@ const DEFAULT_SKINCARE = {
     { id: 'am-cerave', product: 'cerave', text: 'CeraVe Gel Limpiador Espumoso', note: 'Una pequeña cantidad sobre la cara húmeda, masajea 30–60 s y enjuaga con agua tibia.' },
     { id: 'am-byphasse', product: 'byphasse', text: 'Byphasse Tónico Sensi Fresh con aloe vera', note: 'Con un algodón o con las manos, sin frotar. Deja que se absorba.' },
     { id: 'am-purito', product: 'purito', text: 'Purito B5 Panthenol Re-barrier Cream', note: 'Una capa fina en cara y cuello. Espera 1–2 min antes del protector.' },
-    { id: 'am-neutrogena', product: 'neutrogena', text: 'Neutrogena Sun Fresh Derm Care Oil Control', note: 'Último paso. Usa la regla de dos dedos para cara y cuello, y reaplica cada 2–3 h al sol.' },
+    { id: 'am-skin1004', product: 'skin1004', text: 'SKIN1004 Hyalu-Cica Water-Fit Sun Serum', note: 'Tu protector principal. Último paso: dos dedos para cara y cuello, 15 min antes de salir.' },
+    { id: 'am-neutrogena', product: 'neutrogena', text: 'Retoque con Neutrogena Oil Control', note: 'Al mediodía o antes de jugar: reaplica encima. Su toque seco controla el brillo.' },
   ],
   pm: [
     { id: 'pm-cerave', product: 'cerave', text: 'CeraVe Gel Limpiador Espumoso', note: 'Limpia bien para quitar el protector y el sudor del día. Si jugaste, lávate apenas termines.' },
-    { id: 'pm-byphasse', product: 'byphasse', text: 'Byphasse Tónico Sensi Fresh con aloe vera', note: 'Calma la piel después de la limpieza.' },
+    { id: 'pm-tocobo', product: 'tocobo', text: 'TOCOBO AHA BHA Lemon Toner', note: 'Con la cara seca, en algodón o palmaditas. Empieza 3 noches por semana; las otras noches usa el Byphasse. Si arde o se enrojece, espacia más.' },
     { id: 'pm-purito', product: 'purito', text: 'Purito B5 Panthenol Re-barrier Cream', note: 'De noche puedes poner una capa un poco más generosa.' },
   ],
   weekly: [
-    { id: 'wk1', text: 'Exfoliación suave', times: 2 },
     { id: 'wk2', text: 'Mascarilla', times: 1 },
     { id: 'wk3', text: 'Cambiar funda de almohada', times: 1 },
   ],
 };
-const SKINCARE_VERSION = 2; // sube al cambiar la rutina base para actualizarla en el celular
+const SKINCARE_VERSION = 3; // sube al cambiar la rutina base para actualizarla en el celular
 
 const SKINCARE_TIPS = [
   'El protector solar es el paso más importante, incluso si está nublado o te quedas en casa.',
   'Aplica el protector 15 minutos antes de salir y repítelo cada 2–3 horas si estás al sol, también en la cancha.',
   'Lávate la cara después de jugar o entrenar: el sudor acumulado tapa los poros.',
+  'Tu tónico de limón ya exfolia: no sumes exfoliantes ni scrubs y nunca te saltes el protector al día siguiente.',
   'Introduce un producto nuevo a la vez y espera 2 semanas para ver cómo reacciona tu piel.',
   'Constancia antes que cantidad: 3 pasos todos los días valen más que 10 pasos de vez en cuando.',
   'Toma agua y duerme bien: se nota en la piel.',
