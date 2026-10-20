@@ -23,6 +23,7 @@ function defaultState() {
     skinV: 0, // 0 = aún sin la rutina base actual
     nutrition: { profile: null, v: 0 },
     fixedIncome: [],
+    goalsV: 0,
     financeV: 0,
     ui: { finTab: 'resumen', finMonth: null, workoutPick: null, workoutTab: 'plan' },
   };
@@ -63,6 +64,19 @@ if ((S.nutrition.v || 0) < NUTRITION_VERSION) {
 if ((S.financeV || 0) < FINANCE_VERSION) {
   if (!S.fixedIncome.length) S.fixedIncome = FIXED_INCOME_PRESET.map((f, i) => ({ ...f, id: 'fx' + i }));
   S.financeV = FINANCE_VERSION;
+  save();
+}
+// Metas pedidas por chat: se agregan una vez y luego son tuyas para editar.
+if ((S.goalsV || 0) < GOALS_VERSION) {
+  GOALS_PRESET.forEach((g, i) => {
+    if (S.goals.some(x => x.preset === g.key || x.title === g.title)) return;
+    S.goals.push({
+      id: 'gp' + i + Date.now().toString(36), preset: g.key, title: g.title, area: g.area, deadline: g.deadline, why: g.why,
+      milestones: g.steps.map((text, j) => ({ id: `${g.key}-${j}`, text, done: false })),
+      manual: 0, done: false, createdAt: dateKey(),
+    });
+  });
+  S.goalsV = GOALS_VERSION;
   save();
 }
 // Rutina base de skincare actualizada (los productos reales de Pablo).
@@ -570,12 +584,12 @@ function viewHoy() {
     <section class="card hero">
       ${rings([
         { value: skin, cls: 'r1' },
-        { value: week / 3, cls: 'r2' },
+        { value: week / SESSIONS_PER_WEEK, cls: 'r2' },
         { value: goalsAvg / 100, cls: 'r3' },
       ])}
       <ul class="legend-list">
         <li><i class="dot r1"></i><span>Piel</span><b>${skinDone(key, 'am') + skinDone(key, 'pm')}/${skinTotal}</b></li>
-        <li><i class="dot r2"></i><span>Entreno</span><b>${week}/3 <small>sem.</small></b></li>
+        <li><i class="dot r2"></i><span>Entreno</span><b>${week}/${SESSIONS_PER_WEEK} <small>sem.</small></b></li>
         <li><i class="dot r3"></i><span>Metas</span><b>${pct(goalsAvg)}</b></li>
         <li class="streak">${icon('flame')}<span>${streak} ${streak === 1 ? 'día' : 'días'} de racha</span></li>
       </ul>
@@ -1010,7 +1024,7 @@ function viewEjercicio() {
   const tab = ['plan', 'comida', 'guia'].includes(S.ui.workoutTab) ? S.ui.workoutTab : 'plan';
   const titles = { plan: 'Tu plan', comida: 'Alimentación', guia: 'La ciencia detrás' };
   return `
-    ${pageHead('Cuerpo · vóley', titles[tab])}
+    ${pageHead('Esculpido · vóley', titles[tab])}
     <div class="segmented">
       ${[['plan', 'Entreno'], ['comida', 'Alimentación'], ['guia', 'Guía']].map(([id, l]) =>
         `<button class="${tab === id ? 'active' : ''}" data-action="workout-tab" data-tab="${id}">${l}</button>`).join('')}
@@ -1121,7 +1135,7 @@ function workoutPlan() {
   const W = S.workout;
   const level = W.level;
   const atLevel = sessionsAtLevel();
-  const weekNum = Math.min(4, Math.floor(atLevel / 3) + 1);
+  const weekNum = Math.min(4, Math.floor(atLevel / SESSIONS_PER_WEEK) + 1);
   const day = activeWorkoutDay();
   const plan = WORKOUT_PLAN[day];
   const checked = checkedToday(day);
@@ -1149,7 +1163,7 @@ function workoutPlan() {
       </div>
       <p class="micro">${ready && level < 3
         ? '¡Listo para subir! Si los ejercicios ya se sienten fáciles, sube de nivel.'
-        : '3 sesiones por semana, con un día de descanso entre ellas. 12 semanas en total.'}</p>
+        : '4 sesiones por semana (A, D, B, C en orden). Si una semana solo puedes 3, sigue donde te quedaste.'}</p>
       <div class="actions">
         ${level < 3 ? `<button class="btn small ${ready ? 'lime' : 'on-dark'}" data-action="level" data-dir="1">Subir nivel</button>` : ''}
         ${level > 1 ? '<button class="btn small on-dark" data-action="level" data-dir="-1">Bajar nivel</button>' : ''}

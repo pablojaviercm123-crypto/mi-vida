@@ -9,6 +9,22 @@ const GOAL_AREAS = [
   { id: 'proyectos', name: 'Proyectos', icon: 'spark' },
 ];
 
+// Metas que se agregan una sola vez al celular (si no existen ya con ese título).
+const GOALS_PRESET = [
+  {
+    key: 'libro-dispenza', title: 'Leer «Deja de ser tú» de Joe Dispenza', area: 'personal', deadline: '2026-12-01',
+    why: 'Entender cómo funcionan mis hábitos y practicar la meditación del libro.',
+    steps: [
+      'Parte 1 · La ciencia de ti',
+      'Parte 2 · Tu cerebro y la meditación',
+      'Parte 3 · Avanzar hacia tu nuevo destino',
+      'Hacer la meditación guiada del libro 4 semanas',
+      'Anotar las 3 ideas que más me sirvieron',
+    ],
+  },
+];
+const GOALS_VERSION = 1;
+
 const EXPENSE_CATEGORIES = [
   'Comida', 'Transporte', 'Vivienda', 'Servicios', 'Salud', 'Cuidado personal',
   'Ropa', 'Ocio', 'Educación', 'Deudas', 'Ahorro / Inversión', 'Otros',
@@ -108,6 +124,22 @@ const WORKOUT_PLAN = {
       { block: 'Resistencia', name: 'HIIT final', q: 'bodyweight HIIT jumping jacks mountain climbers burpees', reps: ['6 rondas: 20 s intenso / 40 s descanso', '8 rondas: 30 s / 30 s', '10 rondas: 30 s / 20 s'], tip: 'Alterna jumping jacks, escaladores, desplazamientos y burpees. Esfuerzo alto: solo puedes decir palabras sueltas.' },
     ],
   },
+  D: {
+    name: 'Esculpir: músculo en todo el cuerpo',
+    short: 'Esculpir',
+    focus: 'Ganar músculo para verte marcado: cada serie a 1–3 repeticiones del fallo',
+    minutes: 45,
+    exercises: [
+      { block: 'Hipertrofia', name: 'Flexiones con mochila', q: 'weighted backpack push ups', reps: ['3 × 8–12 sin mochila, bajando en 3 s', '4 × 8–12 con mochila ligera', '4 × 8–12 con mochila pesada o pies elevados'], tip: 'Pecho, hombros y tríceps. Baja lento hasta casi tocar el suelo y para cuando te queden 1–2 repeticiones.' },
+      { block: 'Hipertrofia', name: 'Remo a una mano con mochila', q: 'one arm backpack row at home', reps: ['3 × 10–15 por brazo', '4 × 10–15 por brazo', '4 × 10–15 por brazo, 2 s arriba'], tip: 'Espalda ancha (la "V"). Apoya una mano en la silla y lleva el codo hacia la cadera.' },
+      { block: 'Hipertrofia', name: 'Sentadilla goblet con mochila', q: 'backpack goblet squat tempo', reps: ['3 × 12–15, bajando en 3 s', '4 × 12–15 con mochila', '4 × 10–15 con mochila y pausa de 2 s abajo'], tip: 'Abraza la mochila contra el pecho. Baja controlado y sube fuerte.' },
+      { block: 'Hipertrofia', name: 'Peso muerto rumano a una pierna', q: 'single leg romanian deadlift backpack', reps: ['3 × 8–10 por pierna', '3 × 10–12 por pierna con mochila', '4 × 10–12 por pierna con mochila'], tip: 'Glúteos e isquiotibiales. Espalda recta, cadera hacia atrás, y sentirás el estirón atrás del muslo.' },
+      { block: 'Hipertrofia', name: 'Elevaciones laterales', q: 'lateral raises with water bottles', reps: ['3 × 12–20 con botellas', '4 × 12–20 con botellas llenas', '4 × 15–20 + 10 parciales al final'], tip: 'Hombros redondos que ensanchan la silueta. Codos apenas doblados, sube hasta la altura del hombro.' },
+      { block: 'Hipertrofia', name: 'Fondos en silla', q: 'chair tricep dips form', reps: ['3 × 8–12 con rodillas dobladas', '3 × 10–15 con piernas estiradas', '4 × 10–15 con pies elevados'], tip: 'Tríceps (dos tercios del brazo). Hombros lejos de las orejas.' },
+      { block: 'Hipertrofia', name: 'Curl de bíceps con mochila', q: 'backpack bicep curl at home', reps: ['3 × 10–15', '3 × 12–15 bajando en 3 s', '4 × 12–15 bajando en 3 s'], tip: 'Codos pegados al cuerpo y sin balancearte.' },
+      { block: 'Core', name: 'Crunch invertido', q: 'reverse crunch proper form', reps: ['3 × 10–12', '3 × 12–15', '4 × 12–15 lento'], tip: 'Abdomen marcado: lleva la cadera hacia el pecho sin impulso. Los cuadros se ven cuando baja la grasa, pero así crecen.' },
+    ],
+  },
   Y: {
     name: 'Yoga y movilidad',
     short: 'Yoga',
@@ -125,12 +157,13 @@ const WORKOUT_PLAN = {
     ],
   },
 };
-const WORKOUT_ORDER = ['A', 'B', 'C'];
-const SESSIONS_TO_LEVEL_UP = 12; // ~4 semanas a 3 sesiones por semana
+const WORKOUT_ORDER = ['A', 'D', 'B', 'C'];
+const SESSIONS_PER_WEEK = 4;
+const SESSIONS_TO_LEVEL_UP = 16; // ~4 semanas a 4 sesiones por semana
 
 // Descanso entre series para el temporizador (segundos), según el tipo de trabajo (ACSM).
 const REST_BY_BLOCK = {
-  'Potencia': 75, 'Fuerza': 90, 'Hombro': 60, 'Core': 45, 'Equilibrio': 20,
+  'Potencia': 75, 'Fuerza': 90, 'Hipertrofia': 75, 'Hombro': 60, 'Core': 45, 'Equilibrio': 20,
   'Coordinación': 40, 'Pies y pisada': 20, 'Resistencia': 30,
   'Flujo': 10, 'Movilidad': 10, 'Respiración': 0,
 };
@@ -156,6 +189,18 @@ const GUIDE = [
       'Si te sobran 1–2 repeticiones dos sesiones seguidas, sube la dificultad: más lento, a una pierna o con mochila.',
     ],
     sources: [1],
+  },
+  {
+    title: 'Cuerpo esculpido',
+    tag: 'Hipertrofia',
+    points: [
+      'Verse "marcado" es tener más músculo y poca grasa. Con tu IMC de 19,9 la clave es ganar músculo, no comer menos.',
+      '10 o más series por músculo a la semana dan más crecimiento que menos de 5. Tu plan reparte el trabajo en 4 sesiones.',
+      'Con pocas o muchas repeticiones el músculo crece igual si llegas cerca del fallo: por eso en casa sirven la mochila y las botellas.',
+      'Cuando termines todas las series con 3 o más repeticiones de sobra, súbele: más peso en la mochila, más lento o más repeticiones.',
+      'Proteína de 1,6 g por kilo o más al día (tu plan ya tiene 2 g) y dormir 7–9 h.',
+    ],
+    sources: [16, 17, 18],
   },
   {
     title: 'Pliometría',
@@ -254,6 +299,9 @@ const GUIDE_SOURCES = [
   { label: 'Hara y cols. – Ejercicio de pie corto (revisión, 2023)', url: 'https://journals.sagepub.com/doi/10.3233/BMR-210374' },
   { label: 'ISSN – Proteína y ejercicio (Jäger y cols. 2017)', url: 'https://pubmed.ncbi.nlm.nih.gov/28642676/' },
   { label: 'Frankenfield y cols. – Ecuaciones de metabolismo en reposo (2005)', url: 'https://pure.psu.edu/en/publications/comparison-of-predictive-equations-for-resting-metabolic-rate-in-/' },
+  { label: 'Schoenfeld, Ogborn y Krieger – Volumen semanal e hipertrofia (2017)', url: 'https://researchgate.net/publication/305455324' },
+  { label: 'Schoenfeld y cols. – Cargas bajas vs. altas (JSCR 2017)', url: 'https://pubmed.ncbi.nlm.nih.gov/28834797/' },
+  { label: 'Morton y cols. – Proteína y entrenamiento de fuerza (BJSM 2018)', url: 'https://bjsm.bmj.com/content/52/6/376' },
 ];
 
 // Productos de la rutina de Pablo (ilustración en app.js → PRODUCT_ART).
