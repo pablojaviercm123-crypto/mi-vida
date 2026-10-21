@@ -11,7 +11,7 @@ function defaultState() {
     tx: [],
     savings: [],
     decisions: [],
-    workout: { level: 1, levelStart: 0, sessions: [], volley: [], yoga: [], current: null },
+    workout: { level: 1, levelStart: 0, sessions: [], volley: [], yoga: [], dance: [], current: null },
     skin: {
       am: DEFAULT_SKINCARE.am.map(s => ({ ...s })),
       pm: DEFAULT_SKINCARE.pm.map(s => ({ ...s })),
@@ -128,6 +128,7 @@ const ICONS = {
   download: '<path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/>',
   upload: '<path d="M12 16V5M7 9.5l5-5 5 5M5 20h14"/>',
   calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  music: '<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',
   lotus: '<path d="M12 19c-4 0-8-2-8.5-6 2.5-.5 5 .5 6.5 2M12 19c4 0 8-2 8.5-6-2.5-.5-5 .5-6.5 2M12 19c-2.5-2-3.5-4.5-3.5-7S10 6.5 12 5c2 1.5 3.5 4.5 3.5 7S14.5 17 12 19z"/>',
   scale: '<path d="M12 4v16M6 20h12M5 8h14M8 8l-3 6a3 3 0 0 0 6 0zM16 8l-3 6a3 3 0 0 0 6 0z"/>',
   bag: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>',
@@ -481,6 +482,11 @@ function sessionsInLast(days) {
 }
 function doneToday() {
   return S.workout.sessions.find(s => s.date === today());
+}
+const OPTIONAL_DAYS = ['Y', 'K'];
+const OPTIONAL_ICON = { Y: 'lotus', K: 'music' };
+function optionalToday(day) {
+  return S.workout[WORKOUT_PLAN[day].log].includes(today());
 }
 function yogaToday() {
   return S.workout.yoga.includes(today());
@@ -1149,8 +1155,9 @@ function workoutPlan() {
     const s = W.sessions.find(x => x.date === k);
     const v = W.volley.includes(k);
     const y = W.yoga.includes(k);
-    const mark = s ? s.day : v ? icon('ball') : y ? icon('lotus') : '';
-    week.push(`<div class="day ${s ? 'done' : ''} ${!s && (v || y) ? 'extra' : ''} ${i === 0 ? 'today' : ''}">
+    const dn = W.dance.includes(k);
+    const mark = s ? s.day : v ? icon('ball') : dn ? icon('music') : y ? icon('lotus') : '';
+    week.push(`<div class="day ${s ? 'done' : ''} ${!s && (v || y || dn) ? 'extra' : ''} ${i === 0 ? 'today' : ''}">
       <span>${DAY_SHORT[parseKey(k).getDay()]}</span><b>${mark}</b></div>`);
   }
 
@@ -1180,16 +1187,16 @@ function workoutPlan() {
     </section>
 
     <p class="section-label">Elige la sesión</p>
-    <div class="session-picker">${[...WORKOUT_ORDER, 'Y'].map(d => {
+    <div class="session-picker">${[...WORKOUT_ORDER, ...OPTIONAL_DAYS].map(d => {
       const p = WORKOUT_PLAN[d];
       return `<button class="${d === day ? 'active' : ''}" data-action="pick-workout" data-day="${d}">
-        <b>${d === 'Y' ? icon('lotus') : d}</b><span>${esc(p.short)}</span>${d === nextWorkoutDay() ? '<i>te toca</i>' : ''}</button>`;
+        <b>${OPTIONAL_ICON[d] ? icon(OPTIONAL_ICON[d]) : d}</b><span>${esc(p.short)}</span>${d === nextWorkoutDay() ? '<i>te toca</i>' : ''}</button>`;
     }).join('')}</div>
 
     ${wDone && !isYoga ? `<section class="card banner">${icon('check')}<p>Ya completaste la sesión de hoy (${esc(WORKOUT_PLAN[wDone.day].name)}). Descansa o haz yoga.</p></section>` : ''}
 
     <section class="card session">
-      <p class="eyebrow">${isYoga ? 'Opcional · días de descanso' : `Sesión ${day}`} · ${plan.minutes} min</p>
+      <p class="eyebrow">${isYoga ? (day === 'K' ? 'Opcional · cuando quieras' : 'Opcional · días de descanso') : `Sesión ${day}`} · ${plan.minutes} min</p>
       <h2>${esc(plan.name)}</h2>
       <p class="muted">${esc(plan.focus)}</p>
 
@@ -1218,10 +1225,10 @@ function workoutPlan() {
         <ol>${COOLDOWN.map(w => `<li>${esc(w)}</li>`).join('')}</ol>
         <p class="micro">2 × 30 s cada postura, con tensión leve, nunca dolor.</p></details>`}
 
-      <p class="micro">${isYoga ? 'Respira lento y nunca fuerces una postura.' : 'Descansa 60–90 s en potencia y 1–2 min en fuerza. Si algo duele (no es cansancio), detente.'}</p>
+      <p class="micro">${isYoga ? (day === 'K' ? 'Empieza lento y sin música; cuando te salga, súbele el ritmo.' : 'Respira lento y nunca fuerces una postura.') : 'Descansa 60–90 s en potencia y 1–2 min en fuerza. Si algo duele (no es cansancio), detente.'}</p>
 
       ${isYoga
-        ? (yogaToday() ? `<div class="banner-inline">${icon('check')}Yoga de hoy registrado</div>` : `<button class="btn primary block" data-action="finish-yoga">Terminé el yoga</button>`)
+        ? (optionalToday(day) ? `<div class="banner-inline">${icon('check')}${day === 'K' ? 'Baile' : 'Yoga'} de hoy registrado</div>` : `<button class="btn primary block" data-action="finish-optional" data-day="${day}">${day === 'K' ? 'Terminé de bailar' : 'Terminé el yoga'}</button>`)
         : (wDone ? '' : `<button class="btn primary block" data-action="finish-workout" data-day="${day}">Terminé la sesión</button>`)}
     </section>
 
@@ -1230,7 +1237,7 @@ function workoutPlan() {
       <div class="figures">
         <div><span>Sesiones</span><b>${W.sessions.length}</b></div>
         <div><span>Vóley</span><b>${W.volley.length}</b></div>
-        <div><span>Yoga</span><b>${W.yoga.length}</b></div>
+        <div><span>Yoga · baile</span><b>${W.yoga.length}<small> · ${W.dance.length}</small></b></div>
       </div>
       ${W.sessions.slice(-5).reverse().map(s => `<div class="row hist"><span class="cap">${esc(prettyDate(s.date))}</span><span class="muted">${s.day} · nivel ${s.level}</span></div>`).join('')}
     </section>
@@ -1656,11 +1663,12 @@ const ACTIONS = {
       openModal('¿Terminar la sesión?', `<p>Marcaste ${n} de ${total} ejercicios. ¿Registrarla igual?</p>`, () => { finish(); }, 'Sí, registrar');
     } else finish();
   },
-  'finish-yoga': () => {
-    if (!yogaToday()) S.workout.yoga.push(today());
-    if (S.workout.current && S.workout.current.done) delete S.workout.current.done.Y;
+  'finish-optional': el => {
+    const day = el.dataset.day;
+    if (!optionalToday(day)) S.workout[WORKOUT_PLAN[day].log].push(today());
+    if (S.workout.current && S.workout.current.done) delete S.workout.current.done[day];
     save(); render();
-    toast('Yoga registrado. Buena recuperación.');
+    toast(day === 'K' ? 'Baile registrado. ¡A disfrutar la próxima fiesta!' : 'Yoga registrado. Buena recuperación.');
   },
   level: el => {
     S.workout.level = Math.max(1, Math.min(3, S.workout.level + Number(el.dataset.dir)));

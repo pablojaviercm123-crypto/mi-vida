@@ -163,6 +163,7 @@ const WORKOUT_PLAN = {
     focus: 'Flexibilidad, equilibrio y recuperación. Para días de descanso o después de jugar',
     minutes: 20,
     optional: true,
+    log: 'yoga',
     exercises: [
       { block: 'Flujo', name: 'Saludo al sol', q: 'yoga sun salutation for beginners', reps: ['3 rondas lentas', '4 rondas', '5 rondas'], tip: 'Coordina cada movimiento con la respiración. Calienta todo el cuerpo.' },
       { block: 'Flujo', name: 'Guerrero II y triángulo', q: 'warrior 2 triangle pose', reps: ['30 s por lado c/u', '45 s por lado c/u', '60 s por lado c/u'], tip: 'Piernas fuertes y pecho abierto.' },
@@ -171,6 +172,24 @@ const WORKOUT_PLAN = {
       { block: 'Movilidad', name: 'Puente y torsión acostado', q: 'yoga bridge supine twist', reps: ['2 × 30 s c/u', '2 × 45 s c/u', '2 × 60 s c/u'], tip: 'Libera la espalda baja.' },
       { block: 'Movilidad', name: 'Hilo en la aguja (hombros)', q: 'thread the needle stretch', reps: ['30 s por lado', '45 s por lado', '60 s por lado'], tip: 'En cuatro apoyos, pasa un brazo por debajo del otro y gira el tronco.' },
       { block: 'Respiración', name: 'Respiración en savasana', q: 'savasana breathing 4 6', reps: ['2 min', '3 min', '5 min'], tip: 'Inhala 4 s, exhala 6 s. Baja el estrés y ayuda a recuperarte.' },
+    ],
+  },
+  K: {
+    name: 'Baile: ritmo y soltura',
+    short: 'Baile',
+    focus: 'Ritmo, aislamientos y cadera suelta para bailar con seguridad. Pon tu música favorita',
+    minutes: 30,
+    optional: true,
+    log: 'dance',
+    exercises: [
+      { block: 'Ritmo', name: 'Marcar el pulso (groove)', q: 'dance groove bounce basics beginners', reps: ['3 × 1 min', '4 × 1 min', '4 × 90 s'], tip: 'Rebota suave con las rodillas al tiempo de la música. Cuenta 1-2-3-4 en voz baja. Todo baile parte de aquí.' },
+      { block: 'Aislamientos', name: 'Aislamiento de pecho', q: 'chest isolation dance tutorial', reps: ['3 × 30 s', '3 × 45 s', '4 × 45 s al ritmo'], tip: 'Solo se mueve el pecho: adelante, atrás y a los lados. La cadera queda quieta.' },
+      { block: 'Aislamientos', name: 'Cadera: círculos y ochos', q: 'hip circles figure eight dance', reps: ['3 × 30 s por sentido', '3 × 45 s por sentido', '4 × 45 s al ritmo'], tip: 'Rodillas suaves y torso quieto. Suelta la cadera, que es lo que más se nota al bailar.' },
+      { block: 'Aislamientos', name: 'Body roll', q: 'body roll dance tutorial beginner', reps: ['3 × 30 s', '3 × 45 s', '4 × 45 s al ritmo'], tip: 'Onda de arriba abajo: pecho, abdomen, cadera, rodillas. Lento primero, después con la música.' },
+      { block: 'Coordinación', name: 'Pasos base en combinación', q: 'basic dance steps combo beginners step touch', reps: ['3 × 45 s', '4 × 45 s', '4 × 1 min agregando brazos'], tip: 'Step touch, paso lateral y paso cruzado. Junta 2 pasos en 8 tiempos y repite.' },
+      { block: 'Giros', name: 'Giros con punto fijo', q: 'pivot turn spotting dance tutorial', reps: ['3 × 4 por lado', '3 × 6 por lado', '3 × 8 por lado, doble giro'], tip: 'Mira un punto y gira la cabeza al final para no marearte. Los tobillos fuertes del entreno ayudan.' },
+      { block: 'Giros', name: 'Equilibrio en puntillas', q: 'releve balance exercise', reps: ['3 × 20 s', '3 × 30 s', '3 × 30 s con brazos arriba'], tip: 'Postura alta, abdomen firme. Mejora el control en giros y caídas.' },
+      { block: 'Baile', name: 'Freestyle', q: 'freestyle dance practice tips', reps: ['1 canción', '2 canciones', '3 canciones grabándote'], tip: 'Baila libre usando lo de hoy. Grabarte te ayuda a ver qué mejorar y es divertido.' },
     ],
   },
 };
@@ -184,6 +203,7 @@ const REST_BY_BLOCK = {
   'Potencia': 75, 'Fuerza': 90, 'Hipertrofia': 75, 'Hombro': 60, 'Core': 45, 'Equilibrio': 20,
   'Coordinación': 40, 'Pies y pisada': 20, 'Resistencia': 30,
   'Flujo': 10, 'Movilidad': 10, 'Respiración': 0,
+  'Ritmo': 15, 'Aislamientos': 15, 'Giros': 20, 'Baile': 30,
 };
 
 // Guía resumida que se muestra en la app (detalle completo en la guía del proyecto).
