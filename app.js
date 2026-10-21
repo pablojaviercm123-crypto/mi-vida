@@ -11,7 +11,7 @@ function defaultState() {
     tx: [],
     savings: [],
     decisions: [],
-    workout: { level: 1, levelStart: 0, sessions: [], volley: [], yoga: [], dance: [], current: null },
+    workout: { level: 1, levelStart: 0, sessions: [], volley: [], yoga: [], dance: [], barre: [], current: null },
     skin: {
       am: DEFAULT_SKINCARE.am.map(s => ({ ...s })),
       pm: DEFAULT_SKINCARE.pm.map(s => ({ ...s })),
@@ -285,6 +285,30 @@ function openModal(title, body, onSubmit, submitLabel = 'Guardar') {
   if (first && !('ontouchstart' in window)) first.focus();
 }
 
+function openExerciseAnim(day, i) {
+  const ex = WORKOUT_PLAN[day].exercises[i];
+  const level = S.workout.level || 1;
+  const form = $('#modal-form');
+  form.innerHTML = `
+    <div class="modal-head"><h2>${esc(ex.name)}</h2>
+      <button type="button" class="icon-btn" data-action="close-modal" aria-label="Cerrar">${icon('x')}</button></div>
+    <div class="modal-body">
+      <div class="anim-stage"><svg viewBox="0 0 200 160" role="img" aria-label="Animación de ${esc(ex.name)}"></svg></div>
+      <p class="anim-legend"><i></i>Músculo que trabaja</p>
+      <p class="anim-reps">${esc(ex.reps[Math.min(level, ex.reps.length) - 1])}</p>
+      <p class="anim-tip">${esc(ex.tip)}</p>
+    </div>
+    <div class="modal-actions">
+      <a class="btn ghost" href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.q || ex.name)}" target="_blank" rel="noopener">${icon('play')}Video de referencia</a>
+      <button type="button" class="btn primary" data-action="close-modal">Listo</button>
+    </div>`;
+  modalSubmit = null;
+  $('#modal').showModal();
+  startMotion(form.querySelector('.anim-stage svg'), exerciseMotionKey(ex.name));
+}
+
+$('#modal').addEventListener('close', () => stopMotion());
+
 function closeModal() {
   $('#modal').close();
   modalSubmit = null;
@@ -483,8 +507,8 @@ function sessionsInLast(days) {
 function doneToday() {
   return S.workout.sessions.find(s => s.date === today());
 }
-const OPTIONAL_DAYS = ['Y', 'K'];
-const OPTIONAL_ICON = { Y: 'lotus', K: 'music' };
+const OPTIONAL_DAYS = ['Y', 'K', 'R'];
+const OPTIONAL_ICON = { Y: 'lotus', K: 'music', R: 'spark' };
 function optionalToday(day) {
   return S.workout[WORKOUT_PLAN[day].log].includes(today());
 }
@@ -1155,8 +1179,8 @@ function workoutPlan() {
     const s = W.sessions.find(x => x.date === k);
     const v = W.volley.includes(k);
     const y = W.yoga.includes(k);
-    const dn = W.dance.includes(k);
-    const mark = s ? s.day : v ? icon('ball') : dn ? icon('music') : y ? icon('lotus') : '';
+    const dn = W.dance.includes(k) || W.barre.includes(k);
+    const mark = s ? s.day : v ? icon('ball') : W.dance.includes(k) ? icon('music') : W.barre.includes(k) ? icon('spark') : y ? icon('lotus') : '';
     week.push(`<div class="day ${s ? 'done' : ''} ${!s && (v || y || dn) ? 'extra' : ''} ${i === 0 ? 'today' : ''}">
       <span>${DAY_SHORT[parseKey(k).getDay()]}</span><b>${mark}</b></div>`);
   }
@@ -1196,7 +1220,7 @@ function workoutPlan() {
     ${wDone && !isYoga ? `<section class="card banner">${icon('check')}<p>Ya completaste la sesión de hoy (${esc(WORKOUT_PLAN[wDone.day].name)}). Descansa o haz yoga.</p></section>` : ''}
 
     <section class="card session">
-      <p class="eyebrow">${isYoga ? (day === 'K' ? 'Opcional · cuando quieras' : 'Opcional · días de descanso') : `Sesión ${day}`} · ${plan.minutes} min</p>
+      <p class="eyebrow">${isYoga ? `Opcional · ${plan.when}` : `Sesión ${day}`} · ${plan.minutes} min</p>
       <h2>${esc(plan.name)}</h2>
       <p class="muted">${esc(plan.focus)}</p>
 
@@ -1214,8 +1238,8 @@ function workoutPlan() {
               <span class="label"><b>${esc(ex.name)}</b><span class="reps">${esc(ex.reps[level - 1])}</span></span>
             </button>
             <div class="ex-tools">
+              <button class="tool" data-action="ex-anim" data-day="${day}" data-i="${i}">${icon('play')}Ver cómo se hace</button>
               <button class="tool" data-action="timer-open" data-day="${day}" data-i="${i}">${icon('timer')}Temporizador</button>
-              <a class="tool" href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.q || ex.name)}" target="_blank" rel="noopener">${icon('play')}Ver ejemplo</a>
             </div>
             <details class="tipbox"><summary>Cómo hacerlo</summary><p>${esc(ex.tip)}</p></details>
           </li>`;
@@ -1225,10 +1249,10 @@ function workoutPlan() {
         <ol>${COOLDOWN.map(w => `<li>${esc(w)}</li>`).join('')}</ol>
         <p class="micro">2 × 30 s cada postura, con tensión leve, nunca dolor.</p></details>`}
 
-      <p class="micro">${isYoga ? (day === 'K' ? 'Empieza lento y sin música; cuando te salga, súbele el ritmo.' : 'Respira lento y nunca fuerces una postura.') : 'Descansa 60–90 s en potencia y 1–2 min en fuerza. Si algo duele (no es cansancio), detente.'}</p>
+      <p class="micro">${isYoga ? plan.note : 'Descansa 60–90 s en potencia y 1–2 min en fuerza. Si algo duele (no es cansancio), detente.'}</p>
 
       ${isYoga
-        ? (optionalToday(day) ? `<div class="banner-inline">${icon('check')}${day === 'K' ? 'Baile' : 'Yoga'} de hoy registrado</div>` : `<button class="btn primary block" data-action="finish-optional" data-day="${day}">${day === 'K' ? 'Terminé de bailar' : 'Terminé el yoga'}</button>`)
+        ? (optionalToday(day) ? `<div class="banner-inline">${icon('check')}${plan.label} de hoy registrado</div>` : `<button class="btn primary block" data-action="finish-optional" data-day="${day}">${plan.done}</button>`)
         : (wDone ? '' : `<button class="btn primary block" data-action="finish-workout" data-day="${day}">Terminé la sesión</button>`)}
     </section>
 
@@ -1237,7 +1261,7 @@ function workoutPlan() {
       <div class="figures">
         <div><span>Sesiones</span><b>${W.sessions.length}</b></div>
         <div><span>Vóley</span><b>${W.volley.length}</b></div>
-        <div><span>Yoga · baile</span><b>${W.yoga.length}<small> · ${W.dance.length}</small></b></div>
+        <div><span>Yoga · baile · barre</span><b>${W.yoga.length}<small> · ${W.dance.length} · ${W.barre.length}</small></b></div>
       </div>
       ${W.sessions.slice(-5).reverse().map(s => `<div class="row hist"><span class="cap">${esc(prettyDate(s.date))}</span><span class="muted">${s.day} · nivel ${s.level}</span></div>`).join('')}
     </section>
@@ -1636,6 +1660,7 @@ const ACTIONS = {
     toast('Plan de alimentación listo');
   }),
   'timer-open': el => openTimer(el.dataset.day, Number(el.dataset.i)),
+  'ex-anim': el => openExerciseAnim(el.dataset.day, Number(el.dataset.i)),
   'timer-toggle': () => timerToggle(),
   'timer-skip': () => timerNext(),
   'timer-add': () => { if (T) { T.endAt += 15000; T.remaining += 15; timerPaint(); } },
@@ -1668,7 +1693,7 @@ const ACTIONS = {
     if (!optionalToday(day)) S.workout[WORKOUT_PLAN[day].log].push(today());
     if (S.workout.current && S.workout.current.done) delete S.workout.current.done[day];
     save(); render();
-    toast(day === 'K' ? 'Baile registrado. ¡A disfrutar la próxima fiesta!' : 'Yoga registrado. Buena recuperación.');
+    toast(WORKOUT_PLAN[day].toast);
   },
   level: el => {
     S.workout.level = Math.max(1, Math.min(3, S.workout.level + Number(el.dataset.dir)));

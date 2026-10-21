@@ -163,7 +163,7 @@ const WORKOUT_PLAN = {
     focus: 'Flexibilidad, equilibrio y recuperación. Para días de descanso o después de jugar',
     minutes: 20,
     optional: true,
-    log: 'yoga',
+    log: 'yoga', label: 'Yoga', when: 'días de descanso', done: 'Terminé el yoga', note: 'Respira lento y nunca fuerces una postura.', toast: 'Yoga registrado. Buena recuperación.',
     exercises: [
       { block: 'Flujo', name: 'Saludo al sol', q: 'yoga sun salutation for beginners', reps: ['3 rondas lentas', '4 rondas', '5 rondas'], tip: 'Coordina cada movimiento con la respiración. Calienta todo el cuerpo.' },
       { block: 'Flujo', name: 'Guerrero II y triángulo', q: 'warrior 2 triangle pose', reps: ['30 s por lado c/u', '45 s por lado c/u', '60 s por lado c/u'], tip: 'Piernas fuertes y pecho abierto.' },
@@ -180,7 +180,7 @@ const WORKOUT_PLAN = {
     focus: 'Ritmo, aislamientos y cadera suelta para bailar con seguridad. Pon tu música favorita',
     minutes: 30,
     optional: true,
-    log: 'dance',
+    log: 'dance', label: 'Baile', when: 'cuando quieras', done: 'Terminé de bailar', note: 'Empieza lento y sin música; cuando te salga, súbele el ritmo.', toast: 'Baile registrado. ¡A disfrutar la próxima fiesta!',
     exercises: [
       { block: 'Ritmo', name: 'Marcar el pulso (groove)', q: 'dance groove bounce basics beginners', reps: ['3 × 1 min', '4 × 1 min', '4 × 90 s'], tip: 'Rebota suave con las rodillas al tiempo de la música. Cuenta 1-2-3-4 en voz baja. Todo baile parte de aquí.' },
       { block: 'Aislamientos', name: 'Aislamiento de pecho', q: 'chest isolation dance tutorial', reps: ['3 × 30 s', '3 × 45 s', '4 × 45 s al ritmo'], tip: 'Solo se mueve el pecho: adelante, atrás y a los lados. La cadera queda quieta.' },
@@ -190,6 +190,22 @@ const WORKOUT_PLAN = {
       { block: 'Giros', name: 'Giros con punto fijo', q: 'pivot turn spotting dance tutorial', reps: ['3 × 4 por lado', '3 × 6 por lado', '3 × 8 por lado, doble giro'], tip: 'Mira un punto y gira la cabeza al final para no marearte. Los tobillos fuertes del entreno ayudan.' },
       { block: 'Giros', name: 'Equilibrio en puntillas', q: 'releve balance exercise', reps: ['3 × 20 s', '3 × 30 s', '3 × 30 s con brazos arriba'], tip: 'Postura alta, abdomen firme. Mejora el control en giros y caídas.' },
       { block: 'Baile', name: 'Freestyle', q: 'freestyle dance practice tips', reps: ['1 canción', '2 canciones', '3 canciones grabándote'], tip: 'Baila libre usando lo de hoy. Grabarte te ayuda a ver qué mejorar y es divertido.' },
+    ],
+  },
+  R: {
+    name: 'Barre: postura y piernas de bailarín',
+    short: 'Barre',
+    focus: 'Ballet + pilates con una silla como barra. Piernas largas, glúteo firme y postura alta',
+    minutes: 30,
+    optional: true,
+    log: 'barre', label: 'Barre', when: 'días de descanso o después de Piernas', done: 'Terminé barre', note: 'Movimientos pequeños y controlados; la postura alta es parte del ejercicio.', toast: 'Barre registrado. Postura de bailarín en camino.',
+    exercises: [
+      { block: 'Barre', name: 'Pliés en segunda', q: 'barre plie second position at home', reps: ['3 × 12', '3 × 15', '3 × 15 + 15 pulsos abajo'], tip: 'Pies abiertos más que la cadera, puntas hacia afuera. Baja con la espalda recta y las rodillas sobre los pies.' },
+      { block: 'Barre', name: 'Relevé en primera', q: 'barre releve first position', reps: ['3 × 12', '3 × 15', '3 × 15 lento'], tip: 'Talones juntos, puntas afuera. Sube a puntillas sin que los tobillos se vayan hacia afuera.' },
+      { block: 'Barre', name: 'Arabesque con silla', q: 'barre arabesque leg lift glutes', reps: ['3 × 12 por pierna', '3 × 15 por pierna', '3 × 15 + 15 pulsos por pierna'], tip: 'Manos en la silla, pierna estirada hacia atrás. El glúteo levanta la pierna, no la espalda.' },
+      { block: 'Barre', name: 'Elevación lateral de pierna', q: 'barre side leg lift standing', reps: ['3 × 12 por pierna', '3 × 15 por pierna', '3 × 20 por pierna'], tip: 'Cadera mirando al frente y pie en punta. Trabaja el glúteo medio, que da forma a la cadera.' },
+      { block: 'Barre', name: 'Pulsos en plié con relevé', q: 'barre plie releve pulses', reps: ['3 × 30 s', '3 × 45 s', '3 × 60 s'], tip: 'En plié, sube los talones y haz pulsos pequeños. Quema, y es normal.' },
+      { block: 'Barre', name: 'Port de bras', q: 'port de bras ballet arms beginner', reps: ['2 × 1 min', '3 × 1 min', '3 × 1 min con botellas'], tip: 'Brazos redondeados y hombros abajo. Da la elegancia de los brazos al bailar.' },
     ],
   },
 };
@@ -203,7 +219,7 @@ const REST_BY_BLOCK = {
   'Potencia': 75, 'Fuerza': 90, 'Hipertrofia': 75, 'Hombro': 60, 'Core': 45, 'Equilibrio': 20,
   'Coordinación': 40, 'Pies y pisada': 20, 'Resistencia': 30,
   'Flujo': 10, 'Movilidad': 10, 'Respiración': 0,
-  'Ritmo': 15, 'Aislamientos': 15, 'Giros': 20, 'Baile': 30,
+  'Ritmo': 15, 'Aislamientos': 15, 'Giros': 20, 'Baile': 30, 'Barre': 20,
 };
 
 // Guía resumida que se muestra en la app (detalle completo en la guía del proyecto).

@@ -632,3 +632,31 @@ dialog.timer::backdrop { background: var(--dark); }
 .sun-btns .btn { justify-content: flex-start; gap: 8px; padding-left: 8px; min-width: 0; white-space: normal; text-align: left; line-height: 1.15; }
 .sun-btns .product-art { flex: none; }
 .sun-card .link-btn { margin-top: 10px; }
+
+/* ---------- Animación de ejercicios ---------- */
+
+.anim-stage { background: var(--sunken); border-radius: var(--radius-sm); padding: 6px; }
+.anim-stage svg { display: block; width: 100%; height: auto; aspect-ratio: 200 / 160; }
+.m-floor { stroke: var(--ink-3); stroke-width: 1.5; stroke-linecap: round; }
+.m-seg { stroke: var(--ink); stroke-linecap: round; }
+.m-seg.far { stroke: var(--ink-3); }
+.m-seg.hot { stroke: var(--coral); }
+.m-seg.far.hot { stroke: #FFA88F; }
+.m-head { fill: var(--ink); }
+.m-hot-dot { fill: var(--coral); }
+.m-prop { fill: #CFC9BC; }
+.m-prop-acc { fill: var(--lilac); }
+.m-line { stroke: #B8B1A2; stroke-linecap: round; }
+.m-foot { fill: #E9C9AE; stroke: var(--ink); stroke-width: 2; }
+.m-towel { fill: none; stroke: var(--lilac); stroke-width: 5; stroke-linecap: round; }
+.m-cap { font: 600 9px var(--font); fill: var(--ink-2); text-anchor: middle; }
+.m-breath { fill: none; stroke: var(--lilac); stroke-width: 2; opacity: .6; animation: m-breath 4s ease-in-out infinite; transform-origin: 100px 70px; }
+.m-pulse-in { animation: m-pulse 2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes m-breath { 50% { transform: scale(1.8); opacity: .15; } }
+@keyframes m-pulse { 50% { transform: scale(.7); } }
+.anim-legend { display: flex; align-items: center; gap: 6px; margin: 10px 0 0; font: 600 .76rem var(--font); color: var(--ink-2); }
+.anim-legend i { width: 18px; height: 5px; border-radius: 3px; background: var(--coral); }
+.anim-reps { margin: 10px 0 2px; font: 700 1.05rem var(--font-display); }
+.anim-tip { margin: 0; color: var(--ink-2); font-size: .9rem; line-height: 1.45; }
+.modal-actions a.btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.modal-actions a.btn .ic { width: 16px; height: 16px; }
