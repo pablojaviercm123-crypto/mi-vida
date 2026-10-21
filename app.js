@@ -468,8 +468,8 @@ function lastSession() {
   return S.workout.sessions[S.workout.sessions.length - 1];
 }
 function nextWorkoutDay() {
-  const last = lastSession();
-  if (!last) return 'A';
+  const last = [...S.workout.sessions].reverse().find(s => WORKOUT_ORDER.includes(s.day));
+  if (!last) return WORKOUT_ORDER[0];
   return WORKOUT_ORDER[(WORKOUT_ORDER.indexOf(last.day) + 1) % WORKOUT_ORDER.length];
 }
 function sessionsAtLevel() {
@@ -1163,7 +1163,7 @@ function workoutPlan() {
       </div>
       <p class="micro">${ready && level < 3
         ? '¡Listo para subir! Si los ejercicios ya se sienten fáciles, sube de nivel.'
-        : '4 sesiones por semana (A, D, B, C en orden). Si una semana solo puedes 3, sigue donde te quedaste.'}</p>
+        : '4 sesiones por semana: torso, vóley, piernas y vóley. Si una semana solo puedes 3, sigue donde te quedaste.'}</p>
       <div class="actions">
         ${level < 3 ? `<button class="btn small ${ready ? 'lime' : 'on-dark'}" data-action="level" data-dir="1">Subir nivel</button>` : ''}
         ${level > 1 ? '<button class="btn small on-dark" data-action="level" data-dir="-1">Bajar nivel</button>' : ''}

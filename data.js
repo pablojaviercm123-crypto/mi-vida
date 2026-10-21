@@ -125,19 +125,36 @@ const WORKOUT_PLAN = {
     ],
   },
   D: {
-    name: 'Esculpir: músculo en todo el cuerpo',
-    short: 'Esculpir',
-    focus: 'Ganar músculo para verte marcado: cada serie a 1–3 repeticiones del fallo',
+    name: 'Esculpir: torso, brazos y postura',
+    short: 'Torso',
+    focus: 'Hombros redondos, espalda en V y postura de pasarela. Cada serie a 1–3 repeticiones del fallo',
     minutes: 45,
     exercises: [
       { block: 'Hipertrofia', name: 'Flexiones con mochila', q: 'weighted backpack push ups', reps: ['3 × 8–12 sin mochila, bajando en 3 s', '4 × 8–12 con mochila ligera', '4 × 8–12 con mochila pesada o pies elevados'], tip: 'Pecho, hombros y tríceps. Baja lento hasta casi tocar el suelo y para cuando te queden 1–2 repeticiones.' },
       { block: 'Hipertrofia', name: 'Remo a una mano con mochila', q: 'one arm backpack row at home', reps: ['3 × 10–15 por brazo', '4 × 10–15 por brazo', '4 × 10–15 por brazo, 2 s arriba'], tip: 'Espalda ancha (la "V"). Apoya una mano en la silla y lleva el codo hacia la cadera.' },
-      { block: 'Hipertrofia', name: 'Sentadilla goblet con mochila', q: 'backpack goblet squat tempo', reps: ['3 × 12–15, bajando en 3 s', '4 × 12–15 con mochila', '4 × 10–15 con mochila y pausa de 2 s abajo'], tip: 'Abraza la mochila contra el pecho. Baja controlado y sube fuerte.' },
-      { block: 'Hipertrofia', name: 'Peso muerto rumano a una pierna', q: 'single leg romanian deadlift backpack', reps: ['3 × 8–10 por pierna', '3 × 10–12 por pierna con mochila', '4 × 10–12 por pierna con mochila'], tip: 'Glúteos e isquiotibiales. Espalda recta, cadera hacia atrás, y sentirás el estirón atrás del muslo.' },
       { block: 'Hipertrofia', name: 'Elevaciones laterales', q: 'lateral raises with water bottles', reps: ['3 × 12–20 con botellas', '4 × 12–20 con botellas llenas', '4 × 15–20 + 10 parciales al final'], tip: 'Hombros redondos que ensanchan la silueta. Codos apenas doblados, sube hasta la altura del hombro.' },
+      { block: 'Hipertrofia', name: 'Pike push-up', q: 'pike push up form', reps: ['3 × 6–8', '3 × 8–10', '3 × 8–10 con pies elevados'], tip: 'Hombro de arriba. Cadera arriba en forma de V y baja la cabeza entre las manos.' },
       { block: 'Hipertrofia', name: 'Fondos en silla', q: 'chair tricep dips form', reps: ['3 × 8–12 con rodillas dobladas', '3 × 10–15 con piernas estiradas', '4 × 10–15 con pies elevados'], tip: 'Tríceps (dos tercios del brazo). Hombros lejos de las orejas.' },
       { block: 'Hipertrofia', name: 'Curl de bíceps con mochila', q: 'backpack bicep curl at home', reps: ['3 × 10–15', '3 × 12–15 bajando en 3 s', '4 × 12–15 bajando en 3 s'], tip: 'Codos pegados al cuerpo y sin balancearte.' },
-      { block: 'Core', name: 'Crunch invertido', q: 'reverse crunch proper form', reps: ['3 × 10–12', '3 × 12–15', '4 × 12–15 lento'], tip: 'Abdomen marcado: lleva la cadera hacia el pecho sin impulso. Los cuadros se ven cuando baja la grasa, pero así crecen.' },
+      { block: 'Hombro', name: 'Y-T-W boca abajo', q: 'prone Y T W exercise', reps: ['2 × 8 de cada letra', '3 × 10', '3 × 10 con botellas'], tip: 'Postura: hombros atrás y abajo, pecho abierto. También protege el hombro del remate.' },
+      { block: 'Hombro', name: 'Rotación externa de lado', q: 'side lying external rotation shoulder', reps: ['2 × 12 por brazo', '3 × 12 con botella', '3 × 15 con botella'], tip: 'El manguito rotador sano te deja sacar y rematar sin dolor.' },
+    ],
+  },
+  E: {
+    name: 'Esculpir: piernas, glúteo y abdomen',
+    short: 'Piernas',
+    focus: 'Piernas largas y firmes, glúteo marcado y cintura definida',
+    minutes: 45,
+    exercises: [
+      { block: 'Hipertrofia', name: 'Sentadilla goblet con mochila', q: 'backpack goblet squat tempo', reps: ['3 × 12–15, bajando en 3 s', '4 × 12–15 con mochila', '4 × 10–15 con mochila y pausa de 2 s abajo'], tip: 'Abraza la mochila contra el pecho. Baja controlado y sube fuerte.' },
+      { block: 'Hipertrofia', name: 'Hip thrust con mochila', q: 'hip thrust on couch at home backpack', reps: ['3 × 12–15 sin peso', '4 × 12–15 con mochila', '4 × 12–15 con mochila y 2 s arriba'], tip: 'El mejor para glúteo. Espalda alta en el sillón, mentón al pecho y aprieta arriba.' },
+      { block: 'Hipertrofia', name: 'Sentadilla búlgara con mochila', q: 'bulgarian split squat backpack', reps: ['3 × 8–10 por pierna', '3 × 10–12 por pierna con mochila', '4 × 10–12 por pierna con mochila'], tip: 'Inclina un poco el torso hacia adelante para trabajar más glúteo.' },
+      { block: 'Hipertrofia', name: 'Peso muerto rumano a una pierna', q: 'single leg romanian deadlift backpack', reps: ['3 × 8–10 por pierna', '3 × 10–12 por pierna con mochila', '4 × 10–12 por pierna con mochila'], tip: 'Parte de atrás del muslo y glúteo. Espalda recta y cadera hacia atrás.' },
+      { block: 'Hipertrofia', name: 'Patada de glúteo en cuadrupedia', q: 'quadruped donkey kick glute', reps: ['3 × 15 por pierna', '3 × 20 por pierna', '3 × 20 por pierna con 2 s arriba'], tip: 'Sin arquear la espalda: el movimiento sale de la cadera.' },
+      { block: 'Hipertrofia', name: 'Elevación de talones a una pierna', q: 'single leg calf raise step', reps: ['3 × 12–15 por pierna', '3 × 15–20 en escalón', '4 × 15–20 en escalón con mochila'], tip: 'Pantorrillas firmes y saltos más altos. Baja lento.' },
+      { block: 'Core', name: 'Crunch invertido', q: 'reverse crunch proper form', reps: ['3 × 10–12', '3 × 12–15', '4 × 12–15 lento'], tip: 'Lleva la cadera hacia el pecho sin impulso.' },
+      { block: 'Core', name: 'Plancha lateral', q: 'side plank form', reps: ['3 × 20 s por lado', '3 × 30 s por lado', '3 × 40 s por lado elevando la pierna'], tip: 'Oblicuos: cintura definida. Cuerpo en línea recta.' },
+      { block: 'Core', name: 'Vacío abdominal', q: 'stomach vacuum exercise', reps: ['3 × 15 s', '3 × 20 s', '4 × 20 s'], tip: 'Bota el aire y mete el ombligo hacia la columna. Entrena el músculo profundo que "cierra" la cintura.' },
     ],
   },
   Y: {
@@ -157,7 +174,8 @@ const WORKOUT_PLAN = {
     ],
   },
 };
-const WORKOUT_ORDER = ['A', 'D', 'B', 'C'];
+// Mitad esculpir (D, E) y mitad vóley (A, C). La sesión B queda disponible en el plan.
+const WORKOUT_ORDER = ['D', 'A', 'E', 'C'];
 const SESSIONS_PER_WEEK = 4;
 const SESSIONS_TO_LEVEL_UP = 16; // ~4 semanas a 4 sesiones por semana
 
@@ -194,8 +212,8 @@ const GUIDE = [
     title: 'Cuerpo esculpido',
     tag: 'Hipertrofia',
     points: [
-      'Verse "marcado" es tener más músculo y poca grasa. Con tu IMC de 19,9 la clave es ganar músculo, no comer menos.',
-      '10 o más series por músculo a la semana dan más crecimiento que menos de 5. Tu plan reparte el trabajo en 4 sesiones.',
+      'El look de modelo es estilizado: músculo firme sin volumen exagerado y buena postura. Con tu IMC de 19,9 la clave es ganar músculo poco a poco, no comer menos.',
+      '10 o más series por músculo a la semana dan más crecimiento que menos de 5. Tu plan tiene 2 sesiones de esculpir (torso y piernas) y 2 de vóley, que también suman a piernas y core.',
       'Con pocas o muchas repeticiones el músculo crece igual si llegas cerca del fallo: por eso en casa sirven la mochila y las botellas.',
       'Cuando termines todas las series con 3 o más repeticiones de sobra, súbele: más peso en la mochila, más lento o más repeticiones.',
       'Proteína de 1,6 g por kilo o más al día (tu plan ya tiene 2 g) y dormir 7–9 h.',

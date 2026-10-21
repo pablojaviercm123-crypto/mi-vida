@@ -1,6 +1,6 @@
 // Guarda la app en caché para que funcione sin internet.
 // Sube la versión cuando cambien los archivos para que el celular descargue lo nuevo.
-const CACHE = 'mi-vida-v9';
+const CACHE = 'mi-vida-v10';
 const FONT_CACHE = 'mi-vida-fonts';
 const FILES = [
   './', 'index.html', 'styles.css', 'data.js', 'app.js', 'manifest.webmanifest',
